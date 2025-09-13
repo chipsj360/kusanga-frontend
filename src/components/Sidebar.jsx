@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 const SideBar=()=>{
     return(
         <>
@@ -61,10 +62,10 @@ const SideBar=()=>{
                     {/* Submenu start */}
                     <ul className="sidebar-submenu">
                         <li className="sidebar-submenu__item">
-                        <a href="student-courses.html" className="sidebar-submenu__link">
+                        <Link to="/courses" className="sidebar-submenu__link">
                             {" "}
                             Student Courses{" "}
-                        </a>
+                        </Link>
                         </li>
                         <li className="sidebar-submenu__item">
                         <a href="mentor-courses.html" className="sidebar-submenu__link">

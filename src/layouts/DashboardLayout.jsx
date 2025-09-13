@@ -1,5 +1,6 @@
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import Footer from '../components/Footer';
 const DashboardLayout = ({children}) => {
     return (
         <> 
@@ -9,6 +10,7 @@ const DashboardLayout = ({children}) => {
                 <Navbar />
                 <main className="p-4">{children}</main>
             </div>
+            
             </div>
         </>
     );
