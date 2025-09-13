@@ -1,6 +1,7 @@
 const SideBar=()=>{
     return(
         <>
+        <div className="side-overlay" />
         <aside className="sidebar">
             {/* sidebar close btn */}
             <button

@@ -1,6 +1,5 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 import './assets/css/bootstrap.min.css'
 import './assets/css/file-upload.css'
 import './assets/css/plyr.css'

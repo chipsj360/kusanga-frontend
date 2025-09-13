@@ -1,7 +1,7 @@
 const Navbar=()=>{
 
     return(
-     <>
+    
      <>
   {/* Hello world */}
   <div className="dashboard-main-wrapper">
@@ -425,7 +425,7 @@ const Navbar=()=>{
             </div>
             </div>
         </div>
-        </>
+       
 
      </>
     );
