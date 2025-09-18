@@ -1,6 +1,14 @@
 import '../assets/css/Signup.css'
+import { useState } from "react";
+import API from "../api";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   return (
     <div className="signup-page"> {/* scoped wrapper */}
       <div className="auth-card text-white mx-3">
