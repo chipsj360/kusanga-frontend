@@ -1,5 +1,6 @@
 import '../assets/css/Login.css'
 import '../assets/css/bootstrap.min.css'
+import { Link } from 'react-router-dom';
 const Login=() =>{
 
     return(
@@ -45,7 +46,7 @@ const Login=() =>{
         <hr className="bg-light" />
         <div className="text-center">
           <p>
-            Don’t have an account? <a href="/signup">Sign up</a>
+            Don’t have an account? <Link to="/signup">Sign up</Link>
           </p>
         </div>
       </div>

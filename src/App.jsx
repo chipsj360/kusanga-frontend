@@ -9,32 +9,38 @@ import Dashboard from './pages/Dashboard'
 import Courses from './pages/Courses'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
-
+import PrivateRoute from "./components/PrivateRoute";
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
     <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/"
-          element={
-            <DashboardLayout>
-              <Dashboard/>
-            </DashboardLayout>
-          }/>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Dashboard />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/courses"
             element={
-            <DashboardLayout>
-            <Courses />
-            </DashboardLayout>
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Courses />
+                </DashboardLayout>
+              </PrivateRoute>
             }
           />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
