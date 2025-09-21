@@ -1,8 +1,28 @@
 import '../assets/css/Login.css'
 import '../assets/css/bootstrap.min.css'
-import { Link } from 'react-router-dom';
+import API from "../api";
+import { useNavigate,Link } from "react-router-dom";
+import { useState } from "react";
 const Login=() =>{
+   const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const navigate = useNavigate();
 
+   const handleChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
+
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await API.post("/api/auth/login/", credentials);
+      localStorage.setItem("access", res.data.access);
+      localStorage.setItem("refresh", res.data.refresh);
+      navigate("/"); // go to dashboard
+    } catch (error) {
+      console.error(error.response?.data);
+      alert("Login failed");
+    }
+  };
     return(
    <>
     <div className="auth-page">
@@ -10,20 +30,24 @@ const Login=() =>{
         <h3 className="text-center mb-3">Welcome Back</h3>
         <p className="text-center">Sign in to your account</p>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <input
-              type="email"
+              type="text"
+              name="username"
               className="form-control"
               placeholder="Email Address"
+              onChange={handleChange}
               required
             />
           </div>
           <div className="mb-3">
             <input
               type="password"
+              name="password"
               className="form-control"
               placeholder="Password"
+              onChange={handleChange}
               required
             />
           </div>
