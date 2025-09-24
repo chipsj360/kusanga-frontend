@@ -93,12 +93,12 @@ const SideBar=()=>{
                     {/* Submenu End */}
                     </li>
                     <li className="sidebar-menu__item">
-                    <a href="students.html" className="sidebar-menu__link">
+                    <Link to="/users" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-users-three" />
                         </span>
                         <span className="text">Students</span>
-                    </a>
+                    </Link>
                     </li>
                     <li className="sidebar-menu__item">
                     <a href="assignment.html" className="sidebar-menu__link">

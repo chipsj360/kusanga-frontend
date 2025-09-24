@@ -10,6 +10,7 @@ import Courses from './pages/Courses'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
 import PrivateRoute from "./components/PrivateRoute";
+import Users from './pages/Users'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -35,6 +36,16 @@ function App() {
               <PrivateRoute>
                 <DashboardLayout>
                   <Courses />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Users />
                 </DashboardLayout>
               </PrivateRoute>
             }

@@ -15,7 +15,7 @@ const Navbar=()=>{
     
      <>
   {/* Hello world */}
-  <div className="dashboard-main-wrapper">
+  <div >
     <div className="top-navbar flex-between gap-16">
       <div className="flex-align gap-16">
         {/* Toggle Button Start */}

@@ -1,0 +1,9 @@
+.content-wrapper {
+  margin-left: 252px; /* space for sidebar */
+}
+
+@media (max-width: 1199px) {
+  .content-wrapper {
+    margin-left: 0 !important; /* sidebar collapses */
+  }
+}
