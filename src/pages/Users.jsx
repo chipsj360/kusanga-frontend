@@ -1,7 +1,7 @@
-// src/pages/Users.jsx
 import { useState } from "react";
 import '../assets/css/bootstrap.min.css'
 import '../assets/css/user.css'
+
 const Users = () => {
   const [users, setUsers] = useState([
     {
@@ -15,7 +15,7 @@ const Users = () => {
     },
     {
       id: 2,
-      name: "anita one",
+      name: "Anita One",
       email: "anita@gmail.com",
       role: "AGENT",
       staff: false,
@@ -38,10 +38,10 @@ const Users = () => {
   };
 
   return (
-    <div className="container ">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>User Management</h3>
-        <button className="btn btn-danger">Add New User</button>
+    <div className="container-fluid px-3">
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
+        <h3 className="mb-2">User Management</h3>
+        <button className="btn btn-danger mb-2">Add New User</button>
       </div>
 
       <input
@@ -50,8 +50,9 @@ const Users = () => {
         className="form-control mb-3"
       />
 
+      {/* Responsive Table / Card view */}
       <div className="table-responsive">
-        <table className="table table-bordered table-hover align-middle">
+        <table className="table table-bordered table-hover align-middle users-table">
           <thead className="table-light">
             <tr>
               <th>ID</th>
@@ -67,37 +68,35 @@ const Users = () => {
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
-                <td>{u.id}</td>
-                <td>{u.name}</td>
-                <td>{u.email}</td>
-                <td>{u.role}</td>
-                <td>
-                  <span
-                    className={`badge bg-${u.staff ? "success" : "secondary"}`}
-                  >
+                <td data-label="ID">{u.id}</td>
+                <td data-label="Name">{u.name}</td>
+                <td data-label="Email" className="text-truncate">{u.email}</td>
+                <td data-label="Role">{u.role}</td>
+                <td data-label="Staff">
+                  <span className={`badge bg-${u.staff ? "success" : "secondary"}`}>
                     {u.staff ? "Yes" : "No"}
                   </span>
                 </td>
-                <td>
+                <td data-label="Active">
                   <button
-                    className={`btn btn-sm btn-${
-                      u.active ? "success" : "secondary"
-                    }`}
+                    className={`btn btn-sm btn-${u.active ? "success" : "secondary"}`}
                     onClick={() => handleToggleActive(u.id)}
                   >
                     {u.active ? "Yes" : "No"}
                   </button>
                 </td>
-                <td>{u.dateJoined}</td>
-                <td>
-                  <button className="btn btn-sm btn-info me-1">View</button>
-                  <button className="btn btn-sm btn-warning me-1">Edit</button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleDelete(u.id)}
-                  >
-                    Delete
-                  </button>
+                <td data-label="Date Joined">{u.dateJoined}</td>
+                <td data-label="Actions">
+                  <div className="btn-group flex-wrap">
+                    <button className="btn btn-sm btn-info">View</button>
+                    <button className="btn btn-sm btn-warning">Edit</button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDelete(u.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -105,11 +104,11 @@ const Users = () => {
         </table>
       </div>
 
-      {/* Pagination Placeholder */}
-      <div className="d-flex justify-content-center mt-3">
-        <button className="btn btn-sm btn-light me-2">Prev</button>
-        <button className="btn btn-sm btn-primary">1</button>
-        <button className="btn btn-sm btn-light ms-2">Next</button>
+      {/* Pagination */}
+      <div className="d-flex justify-content-center mt-3 flex-wrap">
+        <button className="btn btn-sm btn-light me-2 mb-2">Prev</button>
+        <button className="btn btn-sm btn-primary mb-2">1</button>
+        <button className="btn btn-sm btn-light ms-2 mb-2">Next</button>
       </div>
     </div>
   );
