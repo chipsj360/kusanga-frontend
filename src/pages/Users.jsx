@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../api";
 import AddUser from "./AddUser";
 import ViewUser from "./ViewUser";
+import EditUser from "./EditUser";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/user.css";
 
@@ -118,7 +119,13 @@ const Users = () => {
       {showView && selectedUser && (
         <ViewUser user={selectedUser} onClose={() => setShowView(false)} />
       )}
-   
+       {showEdit && selectedUser && (
+        <EditUser
+          user={selectedUser}
+          onClose={() => setShowEdit(false)}
+          onSuccess={fetchUsers}
+        />
+      )}
     </div>
   );
 };
