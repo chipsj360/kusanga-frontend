@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api";
+import AddUser from "./AddUser";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/user.css";
 
@@ -106,7 +107,14 @@ const Users = () => {
           </tbody>
         </table>
       </div>
-
+  {/* Modals */}
+      {showAdd && (
+        <AddUser
+          onClose={() => setShowAdd(false)}
+          onSuccess={fetchUsers}
+        />
+      )}
+    
    
     </div>
   );

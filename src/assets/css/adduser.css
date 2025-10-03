@@ -1,0 +1,18 @@
+.modal .form-control,
+.modal .form-select {
+  color: #212529 !important;         /* dark text */
+  background-color: #fff !important; /* white background */
+  border: 1px solid #000 !important; /* black border */
+  border-radius: 0.5rem !important;  /* more curve (8px approx) */
+  padding: 0.6rem 0.75rem;           /* spacing like ChatGPT input */
+}
+
+.modal .form-control:focus,
+.modal .form-select:focus {
+  border-color: #000 !important;     /* keep border black when focused */
+  box-shadow: 0 0 0 0.2rem rgba(0,0,0,0.25) !important; /* subtle glow */
+}
+
+.modal .form-control::placeholder {
+  color: #6c757d; /* softer gray placeholder */
+}
