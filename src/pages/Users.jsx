@@ -30,7 +30,7 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await API.delete(`/users/${id}/`);
+      await API.delete(`/api/users/${id}/`);
       setUsers(users.filter((u) => u.id !== id));
     } catch (err) {
       console.error(err);
