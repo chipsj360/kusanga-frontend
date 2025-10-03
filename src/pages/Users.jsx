@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../api";
 import AddUser from "./AddUser";
+import ViewUser from "./ViewUser";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/user.css";
 
@@ -47,7 +48,7 @@ const Users = () => {
       <input
         type="text"
         placeholder="Search by email or name"
-        className="form-control mb-3"
+        className="form-control text-dark border  rounded mb-3"
       />
 
       <div className="table-responsive">
@@ -114,7 +115,9 @@ const Users = () => {
           onSuccess={fetchUsers}
         />
       )}
-    
+      {showView && selectedUser && (
+        <ViewUser user={selectedUser} onClose={() => setShowView(false)} />
+      )}
    
     </div>
   );
