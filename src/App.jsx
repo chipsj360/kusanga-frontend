@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard'
 import Courses from './pages/Courses'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
+import Modules from './pages/Modules'
 import PrivateRoute from "./components/PrivateRoute";
 import Users from './pages/Users'
 function App() {
@@ -36,6 +37,16 @@ function App() {
               <PrivateRoute>
                 <DashboardLayout>
                   <Courses />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/modules"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Modules/>
                 </DashboardLayout>
               </PrivateRoute>
             }

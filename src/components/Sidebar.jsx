@@ -101,12 +101,12 @@ const SideBar=()=>{
                     </Link>
                     </li>
                     <li className="sidebar-menu__item">
-                    <a href="assignment.html" className="sidebar-menu__link">
+                    <Link to="/modules" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-clipboard-text" />
                         </span>
                         <span className="text">Assignments</span>
-                    </a>
+                    </Link>
                     </li>
                     <li className="sidebar-menu__item">
                     <a href="mentors.html" className="sidebar-menu__link">
