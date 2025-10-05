@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import API from "../api";
 import AddModule from "./AddModule";
+import ViewModule from "./ViewModule";
 
 const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
   const [modules, setModules] = useState([]);
   const [showAddModule, setShowAddModule] = useState(false);
-  const [selectedModule, setSelectedModule] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null); // used for edit & launch
   const [showEditModule, setShowEditModule] = useState(false);
 
   // Fetch all modules for the selected course
@@ -28,6 +29,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
     try {
       await API.delete(`/api/modules/${id}/`);
       setModules(modules.filter((m) => m.id !== id));
+      setSelectedModule(null);
     } catch (err) {
       console.error("Error deleting module:", err);
     }
@@ -39,6 +41,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
       await API.put(`/api/modules/${selectedModule.id}/`, selectedModule);
       fetchModules();
       setShowEditModule(false);
+      setSelectedModule(null);
       alert("Module updated successfully!");
     } catch (err) {
       console.error("Error updating module:", err);
@@ -54,6 +57,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
 
   return (
     <>
+      {/* --- Course Modal --- */}
       <div className="modal show d-block" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered modal-xl">
           <div className="modal-content rounded-3 shadow">
@@ -72,6 +76,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
               <div className="mb-2"><strong>Created By:</strong> {course.created_by || "-"}</div>
 
               <hr />
+
               {/* --- Modules Section --- */}
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="fw-bold">Modules</h5>
@@ -102,6 +107,12 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
                         <td>{m.description}</td>
                         <td>{m.order}</td>
                         <td>
+                          <button
+                            className="btn btn-success btn-sm me-2"
+                            onClick={() => setSelectedModule(m)} // Launch module
+                          >
+                            Launch
+                          </button>
                           <button
                             className="btn btn-warning btn-sm me-2"
                             onClick={() => {
@@ -179,6 +190,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
                       className="form-control text-dark bg-white"
                       value={selectedModule.title}
                       onChange={handleModuleChange}
+                      required
                     />
                   </div>
                   <div className="mb-3">
@@ -219,6 +231,16 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* --- Launch Module Modal --- */}
+      {selectedModule && !showEditModule && (
+        <ViewModule
+          module={selectedModule}
+          onClose={() => setSelectedModule(null)}
+          onDelete={handleDeleteModule}
+          onEdit={() => setShowEditModule(true)}
+        />
       )}
     </>
   );
