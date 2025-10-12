@@ -105,7 +105,7 @@ const SideBar=()=>{
                         <span className="icon">
                         <i className="ph ph-clipboard-text" />
                         </span>
-                        <span className="text">Assignments</span>
+                        <span className="text">Modules</span>
                     </Link>
                     </li>
                     <li className="sidebar-menu__item">
