@@ -1,5 +1,6 @@
 // src/pages/ViewModule.jsx
 import API from "../api";
+import ModuleLauncher from "../components/ModuleLauncher";
 import ScormLauncher from "../components/ScormLauncher";
 
 const ViewModule = ({ module, onClose, onDelete, onEdit }) => {
@@ -12,60 +13,42 @@ const ViewModule = ({ module, onClose, onDelete, onEdit }) => {
 
   // Render module content based on type
   const renderContent = () => {
-    switch (module.content_type) {
-      case "video":
-        if (module.video_url) {
-          // External video (e.g. YouTube/Vimeo)
-          return (
-            <div className="ratio ratio-16x9 mb-3">
-              <iframe
-                src={module.video_url}
-                title={module.title}
-                allowFullScreen
-              />
-            </div>
-          );
-        } else if (module.file) {
-          // Uploaded video file
-          return (
-            <video controls className="w-100 mb-3 rounded border">
-              <source src={getFullUrl(module.file)} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          );
-        }
-        break;
+  let launchUrl = null;
 
-      case "pdf":
-        // Display PDF files inside iframe
-        return (
-          <iframe
-            src={getFullUrl(module.file)}
-            className="w-100 mb-3 border rounded"
-            style={{ height: "600px" }}
-            title={module.title}
-          />
-        );
+  switch (module.content_type) {
+    case "video":
+      // External video (YouTube/Vimeo)
+      if (module.video_url) {
+        launchUrl = module.video_url;
+      }
+      // Uploaded video
+      else if (module.file) {
+        launchUrl = getFullUrl(module.file);
+      }
+      if (launchUrl) {
+        return <ModuleLauncher url={launchUrl} onClose={onClose} />;
+      }
+      break;
 
-      case "scorm":
-       return <ScormLauncher moduleId={module.id} onClose={onClose} />;
+    case "pdf":
+      launchUrl = getFullUrl(module.file);
+      return <ModuleLauncher url={launchUrl} onClose={onClose} />;
 
+    case "text":
+      // Open text as a generated blob page
+      const textWindow = window.open("", "_blank");
+      textWindow.document.write(module.text_content);
+      textWindow.document.close();
+      onClose();
+      return <p className="text-muted">Opening text module...</p>;
 
+    case "scorm":
+      return <ScormLauncher moduleId={module.id} onClose={onClose} />;
 
-      case "text":
-        // Render HTML/text-based content
-        return (
-          <div
-            className="mb-3 border rounded p-3 bg-light text-dark"
-            dangerouslySetInnerHTML={{ __html: module.text_content }}
-          />
-        );
-
-      default:
-        return <p className="mb-3 text-muted">No content available</p>;
-    }
-  };
-
+    default:
+      return <p className="mb-3 text-muted">No content available</p>;
+  }
+};
   return (
     <div className="modal show d-block" tabIndex="-1">
       <div className="modal-dialog modal-dialog-centered modal-xl">
