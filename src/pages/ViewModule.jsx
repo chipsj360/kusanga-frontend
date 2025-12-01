@@ -1,5 +1,6 @@
 // src/pages/ViewModule.jsx
 import API from "../api";
+import ScormLauncher from "../components/ScormLauncher";
 
 const ViewModule = ({ module, onClose, onDelete, onEdit }) => {
   // Helper to ensure correct absolute URLs
@@ -47,15 +48,9 @@ const ViewModule = ({ module, onClose, onDelete, onEdit }) => {
         );
 
       case "scorm":
-        // Display SCORM package (unzipped directory containing index.html)
-        return (
-          <iframe
-            src={getFullUrl(module.scorm_package)}
-            className="w-100 mb-3 border rounded"
-            style={{ height: "600px" }}
-            title={module.title}
-          />
-        );
+       return <ScormLauncher moduleId={module.id} onClose={onClose} />;
+
+
 
       case "text":
         // Render HTML/text-based content
