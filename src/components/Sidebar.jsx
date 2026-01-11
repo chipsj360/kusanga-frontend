@@ -10,6 +10,8 @@ import '../assets/css/jquery-jvectormap-2.0.5.css'
 import '../assets/css/main.css'
 import { Link } from "react-router-dom";
 const SideBar=()=>{
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user?.role;
     return(
         <>
         <div className="side-overlay" />
@@ -26,12 +28,12 @@ const SideBar=()=>{
                 href="index.html"
                 className="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-10"
             >
-                <img src="assets/images/logo/logo.png" alt="Logo" />
+                <img src="../assets/images/logo/Elearning.jpg" alt="Logo" />
             </a>
             <div className="sidebar-menu-wrapper overflow-y-auto scroll-sm">
                 <div className="p-20 pt-10">
                 <ul className="sidebar-menu">
-                    <li className="sidebar-menu__item has-dropdown">
+                    {/* <li className="sidebar-menu__item has-dropdown">
                     <a href="javascript:void(0)" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-squares-four" />
@@ -39,7 +41,7 @@ const SideBar=()=>{
                         <span className="text">Dashboard</span>
                         <span className="link-badge">3</span>
                     </a>
-                    {/* Submenu start */}
+                    
                     <ul className="sidebar-submenu">
                         <li className="sidebar-submenu__item">
                         <a href="index.html" className="sidebar-submenu__link">
@@ -60,37 +62,47 @@ const SideBar=()=>{
                         </a>
                         </li>
                     </ul>
-                    {/* Submenu End */}
-                    </li>
-                    <li className="sidebar-menu__item has-dropdown">
-                    <a href="javascript:void(0)" className="sidebar-menu__link">
-                        <span className="icon">
-                        <i className="ph ph-graduation-cap" />
-                        </span>
-                        <span className="text">Courses</span>
-                    </a>
-                    {/* Submenu start */}
-                    <ul className="sidebar-submenu">
-                        <li className="sidebar-submenu__item">
-                        <Link to="/courses" className="sidebar-submenu__link">
-                            {" "}
-                            Student Courses{" "}
+                    
+                    </li> */}
+
+
+                    {/* <li className="sidebar-menu__item has-dropdown">
+                        <a href="javascript:void(0)" className="sidebar-menu__link">
+                            <span className="icon">
+                            <i className="ph ph-graduation-cap" />
+                            </span>
+                            <span className="text">Courses</span>
+                        </a>
+                        
+                        <ul className="sidebar-submenu">
+                            <li className="sidebar-submenu__item">
+                            <Link to="/courses" className="sidebar-submenu__link">
+                                {" "}
+                                Student Courses{" "}
+                            </Link>
+                            </li>
+                            <li className="sidebar-submenu__item">
+                            <a href="mentor-courses.html" className="sidebar-submenu__link">
+                                {" "}
+                                Mentor Courses{" "}
+                            </a>
+                            </li>
+                            <li className="sidebar-submenu__item">
+                            <a href="create-course.html" className="sidebar-submenu__link">
+                                {" "}
+                                Create Course{" "}
+                            </a>
+                            </li>
+                        </ul>
+                        
+                    </li> */}
+                    <li className="sidebar-menu__item">
+                        <Link to="/courses" className="sidebar-menu__link">
+                            <span className="icon">
+                            <i className="ph ph-users-three" />
+                            </span>
+                            <span className="text">Courses</span>
                         </Link>
-                        </li>
-                        <li className="sidebar-submenu__item">
-                        <a href="mentor-courses.html" className="sidebar-submenu__link">
-                            {" "}
-                            Mentor Courses{" "}
-                        </a>
-                        </li>
-                        <li className="sidebar-submenu__item">
-                        <a href="create-course.html" className="sidebar-submenu__link">
-                            {" "}
-                            Create Course{" "}
-                        </a>
-                        </li>
-                    </ul>
-                    {/* Submenu End */}
                     </li>
                     <li className="sidebar-menu__item">
                     <Link to="/users" className="sidebar-menu__link">
@@ -108,30 +120,7 @@ const SideBar=()=>{
                         <span className="text">Modules</span>
                     </Link>
                     </li>
-                    <li className="sidebar-menu__item">
-                    <a href="mentors.html" className="sidebar-menu__link">
-                        <span className="icon">
-                        <i className="ph ph-users" />
-                        </span>
-                        <span className="text">Mentors</span>
-                    </a>
-                    </li>
-                    <li className="sidebar-menu__item">
-                    <a href="resources.html" className="sidebar-menu__link">
-                        <span className="icon">
-                        <i className="ph ph-bookmarks" />
-                        </span>
-                        <span className="text">Resources</span>
-                    </a>
-                    </li>
-                    <li className="sidebar-menu__item">
-                    <a href="message.html" className="sidebar-menu__link">
-                        <span className="icon">
-                        <i className="ph ph-chats-teardrop" />
-                        </span>
-                        <span className="text">Messages</span>
-                    </a>
-                    </li>
+
                     <li className="sidebar-menu__item">
                     <a href="analytics.html" className="sidebar-menu__link">
                         <span className="icon">
@@ -148,22 +137,8 @@ const SideBar=()=>{
                         <span className="text">Events</span>
                     </a>
                     </li>
-                    <li className="sidebar-menu__item">
-                    <a href="library.html" className="sidebar-menu__link">
-                        <span className="icon">
-                        <i className="ph ph-books" />
-                        </span>
-                        <span className="text">Library</span>
-                    </a>
-                    </li>
-                    <li className="sidebar-menu__item">
-                    <a href="pricing-plan.html" className="sidebar-menu__link">
-                        <span className="icon">
-                        <i className="ph ph-coins" />
-                        </span>
-                        <span className="text">Pricing</span>
-                    </a>
-                    </li>
+
+
                     <li className="sidebar-menu__item">
                     <span className="text-gray-300 text-sm px-20 pt-20 fw-semibold border-top border-gray-100 d-block text-uppercase">
                         Settings
@@ -177,51 +152,7 @@ const SideBar=()=>{
                         <span className="text">Account Settings</span>
                     </a>
                     </li>
-                    <li className="sidebar-menu__item has-dropdown">
-                    <a href="javascript:void(0)" className="sidebar-menu__link">
-                        <span className="icon">
-                        <i className="ph ph-shield-check" />
-                        </span>
-                        <span className="text">Authetication</span>
-                    </a>
-                    {/* Submenu start */}
-                    <ul className="sidebar-submenu">
-                        <li className="sidebar-submenu__item">
-                        <a href="sign-in.html" className="sidebar-submenu__link">
-                            Sign In
-                        </a>
-                        </li>
-                        <li className="sidebar-submenu__item">
-                        <a href="sign-up.html" className="sidebar-submenu__link">
-                            Sign Up
-                        </a>
-                        </li>
-                        <li className="sidebar-submenu__item">
-                        <a href="forgot-password.html" className="sidebar-submenu__link">
-                            Forgot Password
-                        </a>
-                        </li>
-                        <li className="sidebar-submenu__item">
-                        <a href="reset-password.html" className="sidebar-submenu__link">
-                            Reset Password
-                        </a>
-                        </li>
-                        <li className="sidebar-submenu__item">
-                        <a href="verify-email.html" className="sidebar-submenu__link">
-                            Verify Email
-                        </a>
-                        </li>
-                        <li className="sidebar-submenu__item">
-                        <a
-                            href="two-step-verification.html"
-                            className="sidebar-submenu__link"
-                        >
-                            Two Step Verification
-                        </a>
-                        </li>
-                    </ul>
-                    {/* Submenu End */}
-                    </li>
+                   
                 </ul>
                 </div>
                 <div className="p-20 pt-80">
