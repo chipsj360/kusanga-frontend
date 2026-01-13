@@ -10,8 +10,7 @@ import '../assets/css/jquery-jvectormap-2.0.5.css'
 import '../assets/css/main.css'
 import { Link } from "react-router-dom";
 const SideBar=()=>{
-      const user = JSON.parse(localStorage.getItem("user"));
-      const role = user?.role;
+const role = localStorage.getItem("role");
     return(
         <>
         <div className="side-overlay" />
@@ -104,6 +103,7 @@ const SideBar=()=>{
                             <span className="text">Courses</span>
                         </Link>
                     </li>
+                    {(role === "trainer" || role === "admin") && (
                     <li className="sidebar-menu__item">
                     <Link to="/users" className="sidebar-menu__link">
                         <span className="icon">
@@ -112,6 +112,8 @@ const SideBar=()=>{
                         <span className="text">Students</span>
                     </Link>
                     </li>
+                    )}
+                    {(role === "trainer" || role === "admin") && (
                     <li className="sidebar-menu__item">
                     <Link to="/modules" className="sidebar-menu__link">
                         <span className="icon">
@@ -120,7 +122,8 @@ const SideBar=()=>{
                         <span className="text">Modules</span>
                     </Link>
                     </li>
-
+                       )}
+                       { role === "admin" && (
                     <li className="sidebar-menu__item">
                     <a href="analytics.html" className="sidebar-menu__link">
                         <span className="icon">
@@ -129,6 +132,7 @@ const SideBar=()=>{
                         <span className="text">Analytics</span>
                     </a>
                     </li>
+                    )}
                     <li className="sidebar-menu__item">
                     <a href="event.html" className="sidebar-menu__link">
                         <span className="icon">
