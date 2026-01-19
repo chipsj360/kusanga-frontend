@@ -5,6 +5,9 @@ import AddModule from "./AddModule";
 import ViewModule from "./ViewModule";
 
 const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
+const role = localStorage.getItem("role");
+const canManage = role === "trainer" || role === "admin";
+
   const [modules, setModules] = useState([]);
   const [showAddModule, setShowAddModule] = useState(false);
   const [selectedModule, setSelectedModule] = useState(null); // used for edit & launch
@@ -78,6 +81,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
               <hr />
 
               {/* --- Modules Section --- */}
+              {canManage &&(
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="fw-bold">Modules</h5>
                 <button
@@ -87,7 +91,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
                   + Add Module
                 </button>
               </div>
-
+                )}
               {modules.length > 0 ? (
                 <table className="table table-striped table-bordered">
                   <thead>
@@ -113,6 +117,8 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
                           >
                             Launch
                           </button>
+                        {canManage &&(
+                          <>
                           <button
                             className="btn btn-warning btn-sm me-2"
                             onClick={() => {
@@ -128,6 +134,8 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
                           >
                             Delete
                           </button>
+                          </>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -139,7 +147,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
             </div>
 
             <div className="modal-footer d-flex justify-content-between">
-              <div>
+              { canManage &&(<div>
                 <button className="btn btn-warning me-2" onClick={onEdit}>
                   Edit Course
                 </button>
@@ -149,7 +157,7 @@ const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
                 >
                   Delete Course
                 </button>
-              </div>
+              </div> )}
               <button className="btn btn-secondary" onClick={onClose}>
                 Close
               </button>
