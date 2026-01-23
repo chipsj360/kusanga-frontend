@@ -19,6 +19,24 @@ const canManage = role === "trainer" || role === "admin";
   const [enrolling, setEnrolling] = useState(false);
   const [enrollError, setEnrollError] = useState("");
   const [enrollSuccess, setEnrollSuccess] = useState("");
+  const [enrollments, setEnrollments] = useState([]);
+  const [loadingEnrollments, setLoadingEnrollments] = useState(false);
+  const [unenrollError, setUnenrollError] = useState("");
+
+const fetchEnrollments = async () => {
+  if (!canManage) return;
+  setLoadingEnrollments(true);
+  setUnenrollError("");
+  try {
+    const res = await API.get(`/api/enrollments/?course=${course.id}`);
+    setEnrollments(res.data || []);
+  } catch (err) {
+    console.error("Error fetching enrollments:", err);
+    setUnenrollError("Failed to load enrolled students.");
+  } finally {
+    setLoadingEnrollments(false);
+  }
+};
 
 const fetchStudents = async () => {
   try {
@@ -79,7 +97,23 @@ const handleEnroll = async (e) => {
   // Fetch all modules for the selected course
   useEffect(() => {
     fetchModules();
+    fetchEnrollments();
   }, [course]);
+
+  const handleUnenroll = async (enrollmentId) => {
+    if (!window.confirm("Unenroll this student from the course?")) return;
+
+    try {
+      await API.delete(`/api/enrollments/${enrollmentId}/`);
+      setEnrollments((prev) => prev.filter((e) => e.id !== enrollmentId));
+    } catch (err) {
+      console.error("Unenroll error:", err?.response?.data || err);
+      setUnenrollError(
+        err?.response?.data?.detail || "Failed to unenroll student."
+      );
+    }
+  };
+
 
   const fetchModules = async () => {
     try {
@@ -135,6 +169,65 @@ const handleEnroll = async (e) => {
             </div>
 
             <div className="modal-body text-dark">
+              {canManage && (
+  <>
+    <hr />
+    <div className="d-flex justify-content-between align-items-center mb-2">
+      <h5 className="fw-bold mb-0">Enrolled Students</h5>
+      <button className="btn btn-outline-secondary btn-sm" onClick={fetchEnrollments}>
+        Refresh
+      </button>
+    </div>
+
+    {unenrollError && <div className="alert alert-danger">{unenrollError}</div>}
+
+    {loadingEnrollments ? (
+      <p className="text-muted">Loading enrollments...</p>
+    ) : enrollments.length ? (
+      <div className="table-responsive">
+        <table className="table table-sm table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Enrolled At</th>
+              <th>Due Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {enrollments.map((enr, idx) => {
+              const u = enr.user_detail || {};
+              return (
+                <tr key={enr.id}>
+                  <td>{idx + 1}</td>
+                  <td>{u.full_name || "—"}</td>
+                  <td>{u.email || "—"}</td>
+                  <td>{enr.enrolled_at ? new Date(enr.enrolled_at).toLocaleDateString() : "—"}</td>
+                  <td>{enr.due_date ? new Date(enr.due_date).toLocaleDateString() : "—"}</td>
+                  <td>{enr.completed ? "Completed" : "In progress"}</td>
+                  <td>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleUnenroll(enr.id)}
+                    >
+                      Unenroll
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <p className="text-muted">No students enrolled in this course yet.</p>
+    )}
+  </>
+)}
+
               {/* --- Course Details --- */}
               <div className="mb-3"><strong>Description:</strong> {course.description}</div>
               <div className="mb-2"><strong>Type:</strong> {course.course_type}</div>

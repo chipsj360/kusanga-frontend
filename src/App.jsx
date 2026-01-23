@@ -13,6 +13,7 @@ import Modules from './pages/Modules'
 import PrivateRoute from "./components/PrivateRoute";
 import Users from './pages/Users'
 import RoleRoute from "./components/RoleRoute";
+import CourseGroups from "./pages/CourseGroups";
 function App() {
   const [count, setCount] = useState(0)
 
@@ -22,7 +23,7 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
+        <Route path="/course-groups" element={ <DashboardLayout><CourseGroups /></DashboardLayout>} />
         {/* Dashboard */}
         <Route
           path="/"
