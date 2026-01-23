@@ -7,6 +7,10 @@ import "../assets/css/bootstrap.min.css";
 import "../assets/css/user.css";
 
 const Courses = () => {
+  const role = localStorage.getItem("role");
+  const managecourses = role === "admin" || role === "trainer";
+
+
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
@@ -41,12 +45,15 @@ const Courses = () => {
     <div className="container-fluid px-3">
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
         <h3 className="mb-2">Course Management</h3>
-        <button
+        {managecourses &&(
+            <button
           className="btn btn-danger mb-2"
           onClick={() => setShowAdd(true)}
         >
           Add New Course
         </button>
+        )}
+      
       </div>
 
       <input

@@ -12,6 +12,69 @@ const canManage = role === "trainer" || role === "admin";
   const [showAddModule, setShowAddModule] = useState(false);
   const [selectedModule, setSelectedModule] = useState(null); // used for edit & launch
   const [showEditModule, setShowEditModule] = useState(false);
+  const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [dueDate, setDueDate] = useState(""); // YYYY-MM-DD
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollError, setEnrollError] = useState("");
+  const [enrollSuccess, setEnrollSuccess] = useState("");
+
+const fetchStudents = async () => {
+  try {
+    // UserViewSet is trainer/admin only (good)
+    const res = await API.get("/api/users/");
+    const onlyStudents = res.data.filter((u) => u.role === "student");
+    setStudents(onlyStudents);
+  } catch (err) {
+    console.error("Error fetching students:", err);
+    setEnrollError("Failed to load students. Make sure you are admin/trainer.");
+  }
+};
+
+const openEnrollModal = async () => {
+  setEnrollError("");
+  setEnrollSuccess("");
+  setSelectedStudentId("");
+  setDueDate("");
+  setShowEnrollModal(true);
+  await fetchStudents();
+};
+
+const handleEnroll = async (e) => {
+  e.preventDefault();
+  setEnrollError("");
+  setEnrollSuccess("");
+
+  if (!selectedStudentId) {
+    setEnrollError("Please select a student.");
+    return;
+  }
+
+  setEnrolling(true);
+  try {
+    const payload = {
+      user: Number(selectedStudentId),
+      course: course.id,
+      due_date: dueDate ? `${dueDate}T00:00:00Z` : null,
+      completed: false,
+    };
+
+    await API.post("/api/enrollments/", payload);
+    setEnrollSuccess("Student enrolled successfully!");
+  } catch (err) {
+    console.error("Enroll error:", err?.response?.data || err);
+
+    // common error: unique_together violation
+    const msg =
+      err?.response?.data?.non_field_errors?.[0] ||
+      err?.response?.data?.detail ||
+      "Failed to enroll student. The student may already be enrolled.";
+    setEnrollError(msg);
+  } finally {
+    setEnrolling(false);
+  }
+};
 
   // Fetch all modules for the selected course
   useEffect(() => {
@@ -119,7 +182,10 @@ const canManage = role === "trainer" || role === "admin";
                           </button>
                         {canManage &&(
                           <>
-                          <button
+                            <button className="btn btn-primary me-2" onClick={openEnrollModal}>
+                              Enroll Student
+                            </button>
+                           <button
                             className="btn btn-warning btn-sm me-2"
                             onClick={() => {
                               setSelectedModule(m);
@@ -250,6 +316,84 @@ const canManage = role === "trainer" || role === "admin";
           onEdit={() => setShowEditModule(true)}
         />
       )}
+      {showEnrollModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <form onSubmit={handleEnroll}>
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    Enroll Student — <span className="fw-bold">{course.title}</span>
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowEnrollModal(false)}
+                  ></button>
+                </div>
+
+                <div className="modal-body">
+                  {enrollError && (
+                    <div className="alert alert-danger">{enrollError}</div>
+                  )}
+                  {enrollSuccess && (
+                    <div className="alert alert-success">{enrollSuccess}</div>
+                  )}
+
+                  <div className="mb-3">
+                    <label className="form-label">Select Student</label>
+                    <select
+                      className="form-select"
+                      value={selectedStudentId}
+                      onChange={(e) => setSelectedStudentId(e.target.value)}
+                      required
+                    >
+                      <option value="">-- Choose a student --</option>
+                      {students.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.full_name || s.username} ({s.email})
+                        </option>
+                      ))}
+                    </select>
+                    <small className="text-muted">
+                      Only users with role <b>student</b> are shown.
+                    </small>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Due Date (optional)</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  <button
+                    type="submit"
+                    className="btn btn-success"
+                    disabled={enrolling}
+                  >
+                    {enrolling ? "Enrolling..." : "Enroll"}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowEnrollModal(false)}
+                    disabled={enrolling}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 };
