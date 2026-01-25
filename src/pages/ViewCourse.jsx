@@ -236,18 +236,29 @@ const handleEnroll = async (e) => {
 
               <hr />
 
-              {/* --- Modules Section --- */}
-              {canManage &&(
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <h5 className="fw-bold">Modules</h5>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => setShowAddModule(true)}
-                >
-                  + Add Module
-                </button>
-              </div>
+                  {/* --- Modules Section --- */}
+                {canManage && (
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <h5 className="fw-bold mb-0">Modules</h5>
+
+                    <div className="d-flex gap-2">
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={openEnrollModal}
+                      >
+                        Enroll Student
+                      </button>
+
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => setShowAddModule(true)}
+                      >
+                        + Add Module
+                      </button>
+                    </div>
+                  </div>
                 )}
+
               {modules.length > 0 ? (
                 <table className="table table-striped table-bordered">
                   <thead>
@@ -275,9 +286,7 @@ const handleEnroll = async (e) => {
                           </button>
                         {canManage &&(
                           <>
-                            <button className="btn btn-primary me-2" onClick={openEnrollModal}>
-                              Enroll Student
-                            </button>
+
                            <button
                             className="btn btn-warning btn-sm me-2"
                             onClick={() => {
