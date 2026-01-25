@@ -11,18 +11,23 @@ const Login=() =>{
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await API.post("/api/auth/login/", credentials);
-      localStorage.setItem("access", res.data.access);
-      localStorage.setItem("refresh", res.data.refresh);
-      navigate("/"); // go to dashboard
-    } catch (error) {
-      console.error(error.response?.data);
-      alert("Login failed");
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await API.post("/api/auth/login/", credentials);
+
+    localStorage.setItem("access", res.data.access);
+    localStorage.setItem("refresh", res.data.refresh);
+    localStorage.setItem("role", res.data.role);
+    localStorage.setItem("userId", res.data.id);
+
+    navigate("/");
+  } catch (error) {
+    console.error(error.response?.data);
+    alert("Login failed");
+  }
+};
+
     return(
    <>
     <div className="auth-page">

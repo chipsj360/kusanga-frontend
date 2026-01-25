@@ -8,8 +8,27 @@ import '../assets/css/apexcharts.css'
 import '../assets/css/calendar.css'
 import '../assets/css/jquery-jvectormap-2.0.5.css'
 import '../assets/css/main.css'
+import { useNavigate } from "react-router-dom";
+import API from '../api';
 
 const Navbar=()=>{
+const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      const refresh = localStorage.getItem("refresh");
+
+      if (refresh) {
+        await API.post("/api/auth/logout/", { refresh });
+      }
+    } catch (error) {
+      console.error("Logout error:", error.response?.data);
+    } finally {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      navigate("/login");
+    }
+  };
 
     return(
     
@@ -372,17 +391,7 @@ const Navbar=()=>{
                             <span className="text">Account Settings</span>
                             </a>
                         </li>
-                        <li className="mb-4">
-                            <a
-                            href="pricing-plan.html"
-                            className="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15"
-                            >
-                            <span className="text-2xl text-primary-600 d-flex">
-                                <i className="ph ph-chart-bar" />
-                            </span>
-                            <span className="text">Upgrade Plan</span>
-                            </a>
-                        </li>
+
                         <li className="mb-4">
                             <a
                             href="analytics.html"
@@ -417,15 +426,12 @@ const Navbar=()=>{
                             </a>
                         </li>
                         <li className="pt-8 border-top border-gray-100">
-                            <a
-                            href="sign-in.html"
-                            className="py-12 text-15 px-20 hover-bg-danger-50 text-gray-300 hover-text-danger-600 rounded-8 flex-align gap-8 fw-medium text-15"
-                            >
+                         
                             <span className="text-2xl text-danger-600 d-flex">
                                 <i className="ph ph-sign-out" />
                             </span>
-                            <span className="text">Log Out</span>
-                            </a>
+                            <button className="text"  onClick={logout}>Log Out</button>
+                           
                         </li>
                         </ul>
                     </div>

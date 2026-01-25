@@ -12,59 +12,73 @@ import Login from './pages/Login'
 import Modules from './pages/Modules'
 import PrivateRoute from "./components/PrivateRoute";
 import Users from './pages/Users'
+import RoleRoute from "./components/RoleRoute";
+import CourseGroups from "./pages/CourseGroups";
 function App() {
   const [count, setCount] = useState(0)
 
-  return (
-    <>
+   return (
     <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/course-groups" element={ <DashboardLayout><CourseGroups /></DashboardLayout>} />
+        {/* Dashboard */}
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Courses – everyone logged in */}
+        <Route
+          path="/courses"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Courses />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Modules – trainer & admin only */}
+        <Route
+          path="/modules"
+          element={
+            <PrivateRoute>
+              <RoleRoute allowedRoles={["trainer", "admin"]}>
                 <DashboardLayout>
-                  <Dashboard />
+                  <Modules />
                 </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/courses"
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Courses />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-           <Route
-            path="/modules"
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Modules/>
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/users"
-            element={
-              <PrivateRoute>
+              </RoleRoute>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Users / Students – trainer & admin only */}
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <RoleRoute allowedRoles={["trainer", "admin"]}>
                 <DashboardLayout>
                   <Users />
                 </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </>
-  )
+              </RoleRoute>
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
+
 
 export default App
