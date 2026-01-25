@@ -14,6 +14,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Users from './pages/Users'
 import RoleRoute from "./components/RoleRoute";
 import CourseGroups from "./pages/CourseGroups";
+import Enrollment from "./pages/Enrollment";
 function App() {
   const [count, setCount] = useState(0)
 
@@ -23,7 +24,7 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/course-groups" element={ <DashboardLayout><CourseGroups /></DashboardLayout>} />
+        
         {/* Dashboard */}
         <Route
           path="/"
@@ -35,7 +36,24 @@ function App() {
             </PrivateRoute>
           }
         />
-
+        <Route path="/course-groups" element={
+           <PrivateRoute>
+            <RoleRoute allowedRoles={["trainer", "admin"]}>
+              <DashboardLayout>
+               <CourseGroups />
+              </DashboardLayout>
+            </RoleRoute> 
+          </PrivateRoute>
+            } />
+        <Route path="/enrollments" element={
+           <PrivateRoute>
+            <RoleRoute allowedRoles={["trainer", "admin"]}>
+              <DashboardLayout>
+               <Enrollment/>
+              </DashboardLayout>
+            </RoleRoute> 
+          </PrivateRoute>
+            } />
         {/* Courses – everyone logged in */}
         <Route
           path="/courses"
