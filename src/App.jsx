@@ -15,6 +15,7 @@ import Users from './pages/Users'
 import RoleRoute from "./components/RoleRoute";
 import CourseGroups from "./pages/CourseGroups";
 import Enrollment from "./pages/Enrollment";
+import TrainingRecords from "./pages/TrainingRecords";
 function App() {
   const [count, setCount] = useState(0)
 
@@ -50,6 +51,15 @@ function App() {
             <RoleRoute allowedRoles={["trainer", "admin"]}>
               <DashboardLayout>
                <Enrollment/>
+              </DashboardLayout>
+            </RoleRoute> 
+          </PrivateRoute>
+            } />
+        <Route path="/training-records"  element={
+           <PrivateRoute>
+            <RoleRoute allowedRoles={["trainer", "admin", "student"]}>
+              <DashboardLayout>
+               <TrainingRecords />
               </DashboardLayout>
             </RoleRoute> 
           </PrivateRoute>

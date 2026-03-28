@@ -4,9 +4,10 @@ import "../assets/css/bootstrap.min.css";
 
 const EditCourse = ({ course, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
-    title: course.title,
-    description: course.description,
-    course_type: course.course_type,
+    title: course.title || "",
+    description: course.description || "",
+    course_type: course.course_type || "",
+    record_type: course.record_type || "compliance",
     duration: course.duration || "",
     created_by: course.created_by || "",
   });
@@ -21,8 +22,9 @@ const EditCourse = ({ course, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.put(`/api/Courses/${course.id}/`, formData);
+      await API.put(`/api/courses/${course.id}/`, formData);
       onSuccess();
+      onClose();
       alert("Course updated successfully!");
     } catch (err) {
       console.error(err);
@@ -79,6 +81,20 @@ const EditCourse = ({ course, onClose, onSuccess }) => {
                   onChange={handleChange}
                   required
                 />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Record Type</label>
+                <select
+                  name="record_type"
+                  className="form-select"
+                  value={formData.record_type}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="compliance">Compliance</option>
+                  <option value="competence">Competence</option>
+                </select>
               </div>
 
               <div className="mb-3">
