@@ -2,8 +2,39 @@
 import API from "../api";
 import ModuleLauncher from "../components/ModuleLauncher";
 import ScormLauncher from "../components/ScormLauncher";
+import { useEffect } from "react";
 
 const ViewModule = ({ module, onClose, onDelete, onEdit }) => {
+
+const role = localStorage.getItem("role");
+const canTrackProgress = role === "student"; // safest
+
+useEffect(() => {
+  if (!module?.id) return;
+
+  const markStarted = async () => {
+    try {
+      await API.post(`/api/modules/${module.id}/start/`);
+    } catch (err) {
+      console.error("Failed to mark module started:", err?.response?.data || err);
+    }
+  };
+
+  markStarted();
+}, [module?.id]);
+
+
+const markCompleted = async () => {
+  try {
+    await API.post(`/api/modules/${module.id}/complete/`);
+    alert("Module marked as completed!");
+  } catch (err) {
+    console.error("Failed to mark completed:", err?.response?.data || err);
+    alert(err?.response?.data?.detail || "Failed to mark completed.");
+  }
+};
+
+
   // Helper to ensure correct absolute URLs
   const getFullUrl = (path) => {
     if (!path) return null;
@@ -96,6 +127,12 @@ const ViewModule = ({ module, onClose, onDelete, onEdit }) => {
                 Delete
               </button>
             </div>
+            {canTrackProgress && (
+              <button className="btn btn-success" onClick={markCompleted}>
+                Mark Completed
+              </button>
+            )}
+
             <button className="btn btn-secondary" onClick={onClose}>
               Close
             </button>
