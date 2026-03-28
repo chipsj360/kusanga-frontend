@@ -184,6 +184,7 @@ const handleEnroll = async (e) => {
                       <th>Title</th>
                       <th>Description</th>
                       <th>Order</th>
+                       <th>Status</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -194,6 +195,15 @@ const handleEnroll = async (e) => {
                         <td>{m.title}</td>
                         <td>{m.description}</td>
                         <td>{m.order}</td>
+                          <td>
+                            {m.progress_status === "completed" ? (
+                              <span className="badge bg-success">Completed</span>
+                            ) : m.progress_status === "in_progress" ? (
+                              <span className="badge bg-warning text-dark">Attempted</span>
+                            ) : (
+                              <span className="badge bg-secondary">Not Attempted</span>
+                            )}
+                          </td>
                         <td>
                           <button
                             className="btn btn-success btn-sm me-2"
@@ -330,9 +340,13 @@ const handleEnroll = async (e) => {
       {selectedModule && !showEditModule && (
         <ViewModule
           module={selectedModule}
-          onClose={() => setSelectedModule(null)}
+          onClose={() => {
+            setSelectedModule(null);
+            fetchModules();
+          }}
           onDelete={handleDeleteModule}
           onEdit={() => setShowEditModule(true)}
+          onProgressUpdate={fetchModules}
         />
       )}
       {showEnrollModal && (
