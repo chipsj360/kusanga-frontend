@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import API from "../api";
 import AddModule from "./AddModule";
 import ViewModule from "./ViewModule";
-
+import "../assets/css/viewCourse.css";
 const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
 const role = localStorage.getItem("role");
 const canManage = role === "trainer" || role === "admin";
@@ -191,11 +191,11 @@ const handleEnroll = async (e) => {
                   <tbody>
                     {modules.map((m, index) => (
                       <tr key={m.id}>
-                        <td>{index + 1}</td>
-                        <td>{m.title}</td>
-                        <td>{m.description}</td>
-                        <td>{m.order}</td>
-                          <td>
+                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{index + 1}</td>
+                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{m.title}</td>
+                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{m.description}</td>
+                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{m.order}</td>
+                          <td style={{ color: "#000", backgroundColor: "#fff" }}>
                             {m.progress_status === "completed" ? (
                               <span className="badge bg-success">Completed</span>
                             ) : m.progress_status === "in_progress" ? (

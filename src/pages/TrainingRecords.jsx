@@ -46,11 +46,11 @@ const TrainingRecords = () => {
             <tbody>
               {records.map((record, index) => (
                 <tr key={record.id}>
-                  <td>{index + 1}</td>
-                  <td>{record.full_name || "-"}</td>
-                  <td>{record.username}</td>
-                  <td>{record.course_title}</td>
-                  <td>
+                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{index + 1}</td>
+                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{record.full_name || "-"}</td>
+                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{record.username}</td>
+                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{record.course_title}</td>
+                  <td style={{ color: "#000", backgroundColor: "#fff" }}>
                     {record.course_record_type === "compliance"
                       ? "Compliance"
                       : "Competence"}
@@ -66,12 +66,12 @@ const TrainingRecords = () => {
                       {record.status}
                     </span>
                   </td>
-                  <td>
+                  <td style={{ color: "#000", backgroundColor: "#fff" }}>
                     {record.achieved_on
                       ? new Date(record.achieved_on).toLocaleString()
                       : "-"}
                   </td>
-                  <td>
+                  <td style={{ color: "#000", backgroundColor: "#fff" }}>
                     {record.expires_on
                       ? new Date(record.expires_on).toLocaleString()
                       : "-"}
