@@ -22,6 +22,8 @@ const ViewModule = ({ module, onClose, onDelete, onEdit, onProgressUpdate }) => 
     }
   }, [module?.id, onProgressUpdate]);
 
+
+
   const markCompleted = useCallback(async () => {
     if (!module?.id || hasCompletedRef.current === true) return;
 
@@ -34,15 +36,21 @@ const ViewModule = ({ module, onClose, onDelete, onEdit, onProgressUpdate }) => 
     }
   }, [module?.id, onProgressUpdate]);
 
+
+
   useEffect(() => {
     if (!module?.id) return;
     markStarted();
   }, [module?.id, markStarted]);
 
-  const handleClose = async () => {
+
+
+const handleClose = async () => {
+  if (module?.content_type !== "scorm") {
     await markCompleted();
-    onClose();
-  };
+  }
+  onClose();
+};
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -107,7 +115,13 @@ const ViewModule = ({ module, onClose, onDelete, onEdit, onProgressUpdate }) => 
       }
 
       case "scorm":
-        return <ScormLauncher moduleId={module.id} onClose={handleClose} />;
+        return (
+          <ScormLauncher
+            moduleId={module.id}
+            onClose={onClose} // close only, no auto-complete
+            onProgressUpdate={onProgressUpdate}
+          />
+        );
 
       default:
         return <p className="mb-3 text-muted">No content available</p>;
