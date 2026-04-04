@@ -46,7 +46,8 @@ const ViewModule = ({ module, onClose, onDelete, onEdit, onProgressUpdate }) => 
 
 
 const handleClose = async () => {
-  if (module?.content_type !== "scorm") {
+  // Do not auto-complete video or scorm on close
+  if (module?.content_type === "pdf" || module?.content_type === "text") {
     await markCompleted();
   }
   onClose();
@@ -84,14 +85,12 @@ const handleClose = async () => {
 
     switch (module.content_type) {
       case "video":
-        if (module.video_url) {
-          launchUrl = module.video_url;
-        } else if (module.file) {
-          launchUrl = getFullUrl(module.file);
-        }
-        if (launchUrl) {
-          return <ModuleLauncher url={launchUrl} onClose={handleClose} />;
-        }
+        return (
+          <ModuleLauncher
+            url={`${window.location.origin}/module-launcher/${module.id}`}
+            onClose={onClose}
+          />
+        );
         break;
 
       case "pdf":

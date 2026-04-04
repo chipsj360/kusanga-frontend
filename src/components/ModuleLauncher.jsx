@@ -1,17 +1,23 @@
-import { useEffect } from "react";
-import API from "../api";
+import { useEffect, useRef } from "react";
 
 const ModuleLauncher = ({ url, onClose }) => {
+  const openedRef = useRef(false);
+
   useEffect(() => {
-    if (url) {
-      window.open(
-        url,
-        "_blank",
-        "noopener,noreferrer,width=1200,height=800"
-      );
+    if (!url || openedRef.current) return;
+
+    openedRef.current = true;
+
+    const popup = window.open(
+      url,
+      "moduleLauncherWindow",
+      "width=1200,height=800,noopener,noreferrer"
+    );
+
+    if (popup) {
+      onClose();
     }
-    onClose(); // close modal automatically
-  }, []);
+  }, [url, onClose]);
 
   return <p className="text-muted">Opening module in a new window...</p>;
 };

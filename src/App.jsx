@@ -16,6 +16,7 @@ import RoleRoute from "./components/RoleRoute";
 import CourseGroups from "./pages/CourseGroups";
 import Enrollment from "./pages/Enrollment";
 import TrainingRecords from "./pages/TrainingRecords";
+import VideoModulePlayer from "./components/VideoModulePlayer";
 function App() {
   const [count, setCount] = useState(0)
 
@@ -34,6 +35,16 @@ function App() {
               <DashboardLayout>
                 <Dashboard />
               </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Video launcher popup route */}
+        <Route
+          path="/module-launcher/:moduleId"
+          element={
+            <PrivateRoute>
+              <VideoModulePlayer />
             </PrivateRoute>
           }
         />
