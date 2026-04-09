@@ -42,7 +42,7 @@ const EditUser = ({ user, onClose, onSuccess }) => {
                 <div className="col-md-6 mb-3">
                   <label>Role</label>
                   <select name="role" value={form.role} className="form-select" onChange={handleChange}>
-                    <option value="employee">Employee</option>
+                    <option value="student">Student</option>
                     <option value="trainer">Trainer</option>
                     <option value="admin">Admin</option>
                   </select>
