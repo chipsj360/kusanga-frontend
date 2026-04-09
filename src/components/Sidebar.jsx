@@ -9,6 +9,7 @@ import '../assets/css/calendar.css'
 import '../assets/css/jquery-jvectormap-2.0.5.css'
 import '../assets/css/main.css'
 import { Link } from "react-router-dom";
+import Elearning from "../assets/images/logo/Elearning.jpg";
 const SideBar=()=>{
 const role = localStorage.getItem("role");
     return(
@@ -27,7 +28,7 @@ const role = localStorage.getItem("role");
                 href="index.html"
                 className="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-10"
             >
-                <img src="../assets/images/logo/Elearning.jpg" alt="Logo" />
+                <img src={Elearning} alt="Logo" />
             </a>
             <div className="sidebar-menu-wrapper overflow-y-auto scroll-sm">
                 <div className="p-20 pt-10">

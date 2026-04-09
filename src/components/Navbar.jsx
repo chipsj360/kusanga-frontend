@@ -426,12 +426,13 @@ const navigate = useNavigate();
                             </a>
                         </li>
                         <li className="pt-8 border-top border-gray-100">
-                         
-                            <span className="text-2xl text-danger-600 d-flex">
-                                <i className="ph ph-sign-out" />
-                            </span>
-                            <button className="text"  onClick={logout}>Log Out</button>
-                           
+                        <div
+                            className="py-12 px-20 text-danger-600 flex-align gap-8 cursor-pointer"
+                            onClick={logout}
+                        >
+                            <i className="ph ph-sign-out" />
+                            <span>Log Out</span>
+                        </div>
                         </li>
                         </ul>
                     </div>
