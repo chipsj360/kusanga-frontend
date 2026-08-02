@@ -117,7 +117,7 @@ const handleClose = async () => {
         return (
           <ScormLauncher
             moduleId={module.id}
-            onClose={onClose} // close only, no auto-complete
+            onClose={onClose}
             onProgressUpdate={onProgressUpdate}
           />
         );

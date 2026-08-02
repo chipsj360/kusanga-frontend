@@ -1,36 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import API from "../api";
 
-const ScormLauncher = ({ moduleId, onClose, onProgressUpdate }) => {
-  const popupRef = useRef(null);
-  const openedRef = useRef(false);
-  const onCloseRef = useRef(onClose);
-  const onProgressUpdateRef = useRef(onProgressUpdate);
-
+const ScormLauncher = ({ moduleId, onProgressUpdate }) => {
   useEffect(() => {
-    onCloseRef.current = onClose;
-    onProgressUpdateRef.current = onProgressUpdate;
-  }, [onClose, onProgressUpdate]);
-
-  useEffect(() => {
-    if (!moduleId || openedRef.current) return;
-
-    openedRef.current = true;
-
-    const scormUrl = `${API.defaults.baseURL}/api/scorm/launch/${moduleId}/`;
-    popupRef.current = window.open(scormUrl, "_blank", "width=1200,height=800");
-
     const handleMessage = async (event) => {
       if (!event?.data) return;
 
-      const allowedOrigin = new URL(API.defaults.baseURL).origin;
-      if (event.origin !== allowedOrigin) return;
+      console.log("Received SCORM message:", event.origin, event.data);
 
       if (
         event.data.type === "SCORM_PROGRESS" &&
         Number(event.data.moduleId) === Number(moduleId)
       ) {
         try {
+          console.log("Posting SCORM progress to Django:", event.data);
+
           await API.post(`/api/modules/${moduleId}/scorm_progress/`, {
             lesson_status: event.data.lesson_status,
             lesson_location: event.data.lesson_location,
@@ -39,9 +23,7 @@ const ScormLauncher = ({ moduleId, onClose, onProgressUpdate }) => {
             suspend_data: event.data.suspend_data,
           });
 
-          if (onProgressUpdateRef.current) {
-            onProgressUpdateRef.current();
-          }
+          if (onProgressUpdate) onProgressUpdate();
         } catch (err) {
           console.error("Failed to save SCORM progress:", err?.response?.data || err);
         }
@@ -50,24 +32,23 @@ const ScormLauncher = ({ moduleId, onClose, onProgressUpdate }) => {
 
     window.addEventListener("message", handleMessage);
 
-    const timer = setInterval(() => {
-      if (popupRef.current && popupRef.current.closed) {
-        clearInterval(timer);
-        window.removeEventListener("message", handleMessage);
-        openedRef.current = false;
-        if (onCloseRef.current) {
-          onCloseRef.current();
-        }
-      }
-    }, 1000);
-
     return () => {
-      clearInterval(timer);
       window.removeEventListener("message", handleMessage);
     };
-  }, [moduleId]);
+  }, [moduleId, onProgressUpdate]);
 
-  return <p className="text-muted">Opening SCORM module...</p>;
+  return (
+    <iframe
+      src={`${API.defaults.baseURL}/api/scorm/launch/${moduleId}/`}
+      title="SCORM Player"
+      style={{
+        width: "100%",
+        height: "75vh",
+        border: "none",
+      }}
+      allow="fullscreen"
+    />
+  );
 };
 
 export default ScormLauncher;
