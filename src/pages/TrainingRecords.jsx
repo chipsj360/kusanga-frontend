@@ -4,6 +4,7 @@ import API from "../api";
 const TrainingRecords = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchRecords = async () => {
     try {
@@ -20,14 +21,41 @@ const TrainingRecords = () => {
     fetchRecords();
   }, []);
 
+  const query = searchTerm.trim().toLowerCase();
+  const filteredRecords = records.filter((record) => {
+    const values = [
+      record.full_name,
+      record.username,
+      record.course_title,
+      record.course_record_type,
+      record.status,
+    ];
+
+    return !query || values.some((value) =>
+      String(value ?? "").toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="container py-4">
       <h4 className="mb-4">Training Records</h4>
 
+      <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
+        <input
+          type="search"
+          placeholder="Search training records"
+          className="form-control text-dark border rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       {loading ? (
         <p>Loading training records...</p>
-      ) : records.length === 0 ? (
-        <div className="alert alert-info">No training records found.</div>
+      ) : filteredRecords.length === 0 ? (
+        <div className="alert alert-info">
+          {records.length ? "No training records match your search." : "No training records found."}
+        </div>
       ) : (
         <div className="table-responsive">
           <table className="table table-bordered table-striped align-middle">
@@ -44,7 +72,7 @@ const TrainingRecords = () => {
               </tr>
             </thead>
             <tbody>
-              {records.map((record, index) => (
+              {filteredRecords.map((record, index) => (
                 <tr key={record.id}>
                   <td style={{ color: "#000", backgroundColor: "#fff" }}>{index + 1}</td>
                   <td style={{ color: "#000", backgroundColor: "#fff" }}>{record.full_name || "-"}</td>

@@ -12,6 +12,7 @@ const Users = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showView, setShowView] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch users from backend
   useEffect(() => {
@@ -37,6 +38,22 @@ const Users = () => {
     }
   };
 
+  const query = searchTerm.trim().toLowerCase();
+  const filteredUsers = users.filter((user) => {
+    const values = [
+      user.full_name,
+      user.email,
+      user.role,
+      user.job_title,
+      user.department,
+      user.employee_id,
+    ];
+
+    return !query || values.some((value) =>
+      String(value ?? "").toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="container-fluid px-3">
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
@@ -46,11 +63,15 @@ const Users = () => {
         </button>
       </div>
 
-      <input
-        type="text"
-        placeholder="Search by email or name"
-        className="form-control text-dark border  rounded mb-3"
-      />
+      <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
+        <input
+          type="search"
+          placeholder="Search users"
+          className="form-control text-dark border rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       <div className="table-responsive">
         <table className="table table-bordered table-hover align-middle users-table">
@@ -67,7 +88,7 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
+            {filteredUsers.map((u) => (
               <tr key={u.id}>
                 <td data-label="ID">{u.id}</td>
                 <td data-label="Name">{u.full_name}</td>
@@ -106,6 +127,13 @@ const Users = () => {
                 </td>
               </tr>
             ))}
+            {!filteredUsers.length && (
+              <tr>
+                <td colSpan="8" className="text-center text-muted py-3">
+                  {users.length ? "No users match your search." : "No users found."}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

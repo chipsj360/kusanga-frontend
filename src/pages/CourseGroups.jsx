@@ -24,6 +24,7 @@ const CourseGroups = () => {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (!canManage) {
     return <div className="container mt-4">Access denied.</div>;
@@ -159,6 +160,20 @@ const CourseGroups = () => {
     }
   };
 
+  const query = searchTerm.trim().toLowerCase();
+  const includesQuery = (...values) =>
+    !query || values.some((value) => String(value ?? "").toLowerCase().includes(query));
+
+  const filteredGroups = groups.filter((group) =>
+    includesQuery(group.name, group.description)
+  );
+  const filteredCourses = courses.filter((course) =>
+    includesQuery(course.title, course.description, course.course_type)
+  );
+  const filteredStudents = students.filter((student) =>
+    includesQuery(student.full_name, student.username, student.email)
+  );
+
   return (
     <div className="container mt-4 mb-5">
       <div className="d-flex justify-content-between align-items-center">
@@ -170,6 +185,16 @@ const CourseGroups = () => {
 
       {error && <div className="alert alert-danger mt-3">{error}</div>}
       {success && <div className="alert alert-success mt-3">{success}</div>}
+
+      <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
+        <input
+          type="search"
+          placeholder="Search groups, courses, or students"
+          className="form-control text-dark border rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       <div className="row mt-3">
         {/* LEFT: Create + Group list */}
@@ -204,7 +229,7 @@ const CourseGroups = () => {
           <div className="card">
             <div className="card-header fw-bold">Groups</div>
             <div className="list-group list-group-flush" style={{ maxHeight: 420, overflowY: "auto" }}>
-              {groups.map((g) => (
+              {filteredGroups.map((g) => (
                 <button
                   key={g.id}
                   className={`list-group-item list-group-item-action ${selectedGroup?.id === g.id ? "active" : ""}`}
@@ -214,7 +239,11 @@ const CourseGroups = () => {
                   <small className="opacity-75">{(g.courses || []).length} course(s)</small>
                 </button>
               ))}
-              {!groups.length && <div className="p-3 text-muted">No groups yet.</div>}
+              {!filteredGroups.length && (
+                <div className="p-3 text-muted">
+                  {groups.length ? "No groups match your search." : "No groups yet."}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -236,7 +265,7 @@ const CourseGroups = () => {
                   </button>
                 </div>
                 <div className="card-body" style={{ maxHeight: 300, overflowY: "auto" }}>
-                  {courses.map((c) => (
+                  {filteredCourses.map((c) => (
                     <div className="form-check" key={c.id}>
                       <input
                         className="form-check-input"
@@ -251,7 +280,11 @@ const CourseGroups = () => {
                       </label>
                     </div>
                   ))}
-                  {!courses.length && <div className="text-muted">No courses found.</div>}
+                  {!filteredCourses.length && (
+                    <div className="text-muted">
+                      {courses.length ? "No courses match your search." : "No courses found."}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -279,7 +312,7 @@ const CourseGroups = () => {
                   <hr />
 
                   <div style={{ maxHeight: 260, overflowY: "auto" }} className="border rounded p-2">
-                    {students.map((s) => (
+                    {filteredStudents.map((s) => (
                       <div className="form-check py-1" key={s.id}>
                         <input
                           className="form-check-input"
@@ -294,7 +327,11 @@ const CourseGroups = () => {
                         </label>
                       </div>
                     ))}
-                    {!students.length && <div className="text-muted">No students found.</div>}
+                    {!filteredStudents.length && (
+                      <div className="text-muted">
+                        {students.length ? "No students match your search." : "No students found."}
+                      </div>
+                    )}
                   </div>
 
                   <small className="text-muted d-block mt-2">
@@ -312,7 +349,7 @@ const CourseGroups = () => {
                   </p>
 
                   <div style={{ maxHeight: 220, overflowY: "auto" }} className="border rounded p-2">
-                    {students.map((s) => (
+                    {filteredStudents.map((s) => (
                       <div key={s.id} className="d-flex justify-content-between align-items-center py-1">
                         <div>
                           <span className="fw-semibold">{s.full_name || s.username}</span>
@@ -328,7 +365,11 @@ const CourseGroups = () => {
                         </div>
                       </div>
                     ))}
-                    {!students.length && <div className="text-muted">No students found.</div>}
+                    {!filteredStudents.length && (
+                      <div className="text-muted">
+                        {students.length ? "No students match your search." : "No students found."}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -340,4 +381,4 @@ const CourseGroups = () => {
   );
 };
 
-export default CourseGroups;
+export default CourseGroups

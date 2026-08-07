@@ -8,6 +8,7 @@ const Enrollment = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loadingEnrollments, setLoadingEnrollments] = useState(false);
   const [unenrollError, setUnenrollError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchEnrollments = async () => {
     if (!canManage) return;
@@ -42,6 +43,24 @@ const Enrollment = () => {
     fetchEnrollments();
   }, []);
 
+  const query = searchTerm.trim().toLowerCase();
+  const filteredEnrollments = enrollments.filter((enrollment) => {
+    const user = enrollment.user_detail || {};
+    const status = enrollment.completed ? "completed" : "in progress";
+    const values = [
+      user.full_name,
+      user.username,
+      user.email,
+      enrollment.course_title,
+      enrollment.course,
+      status,
+    ];
+
+    return !query || values.some((value) =>
+      String(value ?? "").toLowerCase().includes(query)
+    );
+  });
+
   if (!canManage) return <div className="container mt-4">Access denied.</div>;
 
   return (
@@ -55,9 +74,19 @@ const Enrollment = () => {
 
       {unenrollError && <div className="alert alert-danger">{unenrollError}</div>}
 
+      <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
+        <input
+          type="search"
+          placeholder="Search enrollments"
+          className="form-control text-dark border rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       {loadingEnrollments ? (
         <p className="text-muted">Loading enrollments...</p>
-      ) : enrollments.length ? (
+      ) : filteredEnrollments.length ? (
         <div className="table-responsive">
           <table className="table table-sm table-bordered">
             <thead>
@@ -74,7 +103,7 @@ const Enrollment = () => {
             </thead>
 
             <tbody>
-              {enrollments.map((enr, idx) => {
+              {filteredEnrollments.map((enr, idx) => {
                 // if your serializer returns user_detail/course_detail, this will work
                 const u = enr.user_detail || {};
                 const c = enr.course_detail || {};
@@ -101,7 +130,9 @@ const Enrollment = () => {
           </table>
         </div>
       ) : (
-        <p className="text-muted">No enrollments found.</p>
+        <p className="text-muted">
+          {enrollments.length ? "No enrollments match your search." : "No enrollments found."}
+        </p>
       )}
     </div>
   );

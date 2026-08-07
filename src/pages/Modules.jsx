@@ -13,6 +13,7 @@ const Modules = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showView, setShowView] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchModules();
@@ -38,6 +39,14 @@ const Modules = () => {
     }
   };
 
+  const query = searchTerm.trim().toLowerCase();
+  const filteredModules = modules.filter((module) => {
+    const values = [module.title, module.description, module.course_title];
+    return !query || values.some((value) =>
+      String(value ?? "").toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="container-fluid px-3">
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
@@ -47,15 +56,19 @@ const Modules = () => {
         </button>
       </div>
 
-      <input
-        type="text"
-        placeholder="Search by title or description"
-        className="form-control text-dark border rounded mb-3"
-      />
+      <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
+        <input
+          type="search"
+          placeholder="Search by title, description, or course"
+          className="form-control text-dark border rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       {/* Cards Grid */}
       <div className="row g-3">
-        {modules.map((module) => (
+        {filteredModules.map((module) => (
           <div key={module.id} className="col-md-4 col-sm-6">
             <div
               className="card h-100 shadow-sm border-0 rounded-3"
@@ -85,6 +98,13 @@ const Modules = () => {
             </div>
           </div>
         ))}
+        {!filteredModules.length && (
+          <div className="col-12">
+            <p className="text-muted">
+              {modules.length ? "No modules match your search." : "No modules found."}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Modals */}
