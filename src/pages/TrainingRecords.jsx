@@ -5,8 +5,14 @@ const TrainingRecords = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [courseFilter, setCourseFilter] = useState("");
+  const [recordTypeFilter, setRecordTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [collapsedUsers, setCollapsedUsers] = useState({});
 
   const fetchRecords = async () => {
+    setLoading(true);
+
     try {
       const res = await API.get("/api/training-records/");
       setRecords(res.data);
@@ -22,6 +28,16 @@ const TrainingRecords = () => {
   }, []);
 
   const query = searchTerm.trim().toLowerCase();
+  const courseOptions = Array.from(
+    new Set(records.map((record) => record.course_title).filter(Boolean)),
+  ).sort((a, b) => String(a).localeCompare(String(b)));
+  const recordTypeOptions = Array.from(
+    new Set(records.map((record) => record.course_record_type).filter(Boolean)),
+  ).sort((a, b) => String(a).localeCompare(String(b)));
+  const statusOptions = Array.from(
+    new Set(records.map((record) => record.status).filter(Boolean)),
+  ).sort((a, b) => String(a).localeCompare(String(b)));
+
   const filteredRecords = records.filter((record) => {
     const values = [
       record.full_name,
@@ -31,84 +47,269 @@ const TrainingRecords = () => {
       record.status,
     ];
 
-    return !query || values.some((value) =>
-      String(value ?? "").toLowerCase().includes(query)
-    );
+    const matchesSearch =
+      !query ||
+      values.some((value) =>
+        String(value ?? "")
+          .toLowerCase()
+          .includes(query),
+      );
+    const matchesCourse = !courseFilter || record.course_title === courseFilter;
+    const matchesRecordType =
+      !recordTypeFilter || record.course_record_type === recordTypeFilter;
+    const matchesStatus = !statusFilter || record.status === statusFilter;
+
+    return matchesSearch && matchesCourse && matchesRecordType && matchesStatus;
   });
 
-  return (
-    <div className="container py-4">
-      <h4 className="mb-4">Training Records</h4>
+  const groupedRecords = filteredRecords.reduce((groups, record) => {
+    const userKey =
+      record.user_id ||
+      record.username ||
+      record.full_name ||
+      `unknown-user-${record.id}`;
 
-      <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
-        <input
-          type="search"
-          placeholder="Search training records"
-          className="form-control text-dark border rounded"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+    if (!groups[userKey]) {
+      groups[userKey] = {
+        fullName: record.full_name,
+        username: record.username,
+        records: [],
+      };
+    }
+
+    groups[userKey].records.push(record);
+    return groups;
+  }, {});
+
+  const toggleUserRecords = (userKey) => {
+    setCollapsedUsers((previous) => ({
+      ...previous,
+      [userKey]: !(previous[userKey] ?? true),
+    }));
+  };
+
+  const clearFilters = () => {
+    setCourseFilter("");
+    setRecordTypeFilter("");
+    setStatusFilter("");
+    setSearchTerm("");
+  };
+
+  const formatRecordType = (type) => {
+    if (type === "compliance") return "Compliance";
+    if (type === "competence") return "Competence";
+    return type || "—";
+  };
+
+  const formatDate = (date) => (date ? new Date(date).toLocaleString() : "—");
+
+  return (
+    <div className="container mt-4 mb-5">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h5 className="fw-bold mb-0">Training Records</h5>
+        <button
+          type="button"
+          className="btn btn-outline-secondary btn-sm"
+          onClick={fetchRecords}
+        >
+          Refresh
+        </button>
+      </div>
+
+      <div className="rounded p-3 mb-4" style={{ border: "1px solid #edb9b9" }}>
+        <div className="row g-3 align-items-end">
+          <div className="col-12 col-md-4">
+            <label
+              htmlFor="training-course-filter"
+              className="form-label fw-semibold mb-1"
+            >
+              Filter by Course
+            </label>
+            <select
+              id="training-course-filter"
+              className="form-select"
+              value={courseFilter}
+              onChange={(e) => setCourseFilter(e.target.value)}
+            >
+              <option value="">All Courses</option>
+              {courseOptions.map((course) => (
+                <option key={course} value={course}>
+                  {course}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-12 col-md-3">
+            <label
+              htmlFor="record-type-filter"
+              className="form-label fw-semibold mb-1"
+            >
+              Record Type
+            </label>
+            <select
+              id="record-type-filter"
+              className="form-select"
+              value={recordTypeFilter}
+              onChange={(e) => setRecordTypeFilter(e.target.value)}
+            >
+              <option value="">All Record Types</option>
+              {recordTypeOptions.map((type) => (
+                <option key={type} value={type}>
+                  {formatRecordType(type)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-12 col-md-3">
+            <label
+              htmlFor="training-status-filter"
+              className="form-label fw-semibold mb-1"
+            >
+              Status
+            </label>
+            <select
+              id="training-status-filter"
+              className="form-select"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="">All Statuses</option>
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-12 col-md-2 d-grid">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={clearFilters}
+            >
+              Clear Filters
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-3" style={{ width: "100%", maxWidth: "420px" }}>
+          <label
+            htmlFor="training-record-search"
+            className="form-label fw-semibold mb-1"
+          >
+            Search
+          </label>
+          <input
+            id="training-record-search"
+            type="search"
+            placeholder="Search training records"
+            className="form-control text-dark"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       {loading ? (
-        <p>Loading training records...</p>
-      ) : filteredRecords.length === 0 ? (
-        <div className="alert alert-info">
-          {records.length ? "No training records match your search." : "No training records found."}
-        </div>
+        <p className="text-muted">Loading training records...</p>
+      ) : filteredRecords.length ? (
+        Object.entries(groupedRecords).map(([userKey, group]) => {
+          const isCollapsed = collapsedUsers[userKey] ?? true;
+          const panelId = `training-records-${String(userKey).replace(
+            /[^a-zA-Z0-9_-]/g,
+            "-",
+          )}`;
+
+          return (
+            <section
+              key={userKey}
+              className="rounded mb-4 overflow-hidden"
+              style={{ border: "1px solid #edb9b9" }}
+            >
+              <button
+                type="button"
+                className="bg-light border-0 px-3 py-3 w-100 d-flex justify-content-between align-items-center gap-3 text-start"
+                onClick={() => toggleUserRecords(userKey)}
+                aria-expanded={!isCollapsed}
+                aria-controls={panelId}
+              >
+                <div className="d-flex align-items-center gap-2">
+                  <span aria-hidden="true" style={{ width: "1rem" }}>
+                    {isCollapsed ? "▸" : "▾"}
+                  </span>
+                  <div>
+                    <div className="fw-semibold">
+                      {group.fullName || group.username || "Unknown user"}
+                    </div>
+                    <small className="text-muted">
+                      {group.username || "No username available"}
+                    </small>
+                  </div>
+                </div>
+                <span
+                  className="badge text-dark rounded-0"
+                  style={{ backgroundColor: "#e5e5e5" }}
+                >
+                  {group.records.length}{" "}
+                  {group.records.length === 1 ? "Record" : "Records"}
+                </span>
+              </button>
+
+              <div
+                id={panelId}
+                className="table-responsive"
+                hidden={isCollapsed}
+              >
+                <table className="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th className="ps-3">#</th>
+                      <th>Course</th>
+                      <th>Record Type</th>
+                      <th>Status</th>
+                      <th>Achieved On</th>
+                      <th className="pe-3">Expires On</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {group.records.map((record, index) => (
+                      <tr key={record.id}>
+                        <td className="ps-3 text-muted">{index + 1}</td>
+                        <td>{record.course_title || "—"}</td>
+                        <td>{formatRecordType(record.course_record_type)}</td>
+                        <td>
+                          <span
+                            className={`badge ${
+                              record.status === "compliant" ||
+                              record.status === "competent"
+                                ? "bg-success"
+                                : "bg-secondary"
+                            }`}
+                          >
+                            {record.status || "Unknown"}
+                          </span>
+                        </td>
+                        <td>{formatDate(record.achieved_on)}</td>
+                        <td className="pe-3">
+                          {formatDate(record.expires_on)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          );
+        })
       ) : (
-        <div className="table-responsive">
-          <table className="table table-bordered table-striped align-middle">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Full Name</th>
-                <th>Username</th>
-                <th>Course</th>
-                <th>Record Type</th>
-                <th>Status</th>
-                <th>Achieved On</th>
-                <th>Expires On</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRecords.map((record, index) => (
-                <tr key={record.id}>
-                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{index + 1}</td>
-                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{record.full_name || "-"}</td>
-                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{record.username}</td>
-                  <td style={{ color: "#000", backgroundColor: "#fff" }}>{record.course_title}</td>
-                  <td style={{ color: "#000", backgroundColor: "#fff" }}>
-                    {record.course_record_type === "compliance"
-                      ? "Compliance"
-                      : "Competence"}
-                  </td>
-                  <td>
-                    <span
-                      className={`badge ${
-                        record.status === "compliant" || record.status === "competent"
-                          ? "bg-success"
-                          : "bg-secondary"
-                      }`}
-                    >
-                      {record.status}
-                    </span>
-                  </td>
-                  <td style={{ color: "#000", backgroundColor: "#fff" }}>
-                    {record.achieved_on
-                      ? new Date(record.achieved_on).toLocaleString()
-                      : "-"}
-                  </td>
-                  <td style={{ color: "#000", backgroundColor: "#fff" }}>
-                    {record.expires_on
-                      ? new Date(record.expires_on).toLocaleString()
-                      : "-"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <p className="text-muted">
+          {records.length
+            ? "No training records match your search or filters."
+            : "No training records found."}
+        </p>
       )}
     </div>
   );
