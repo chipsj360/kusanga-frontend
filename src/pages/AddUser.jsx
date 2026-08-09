@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import API from "../api";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/adduser.css";
@@ -14,8 +14,39 @@ const AddUser = ({ onClose, onSuccess }) => {
     employee_id: "",
     department: null,
   });
+  const [departments, setDepartments] = useState([]);
+  const [isLoadingDepartments, setIsLoadingDepartments] = useState(true);
+  const [departmentError, setDepartmentError] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchDepartments = async () => {
+      try {
+        const response = await API.get("/api/departments/");
+        const items = Array.isArray(response.data)
+          ? response.data
+          : response.data.results || [];
+
+        if (isMounted) setDepartments(items);
+      } catch (err) {
+        console.error("Unable to load departments:", err);
+        if (isMounted) {
+          setDepartmentError("Unable to load departments. Please try again.");
+        }
+      } finally {
+        if (isMounted) setIsLoadingDepartments(false);
+      }
+    };
+
+    fetchDepartments();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -102,6 +133,29 @@ const AddUser = ({ onClose, onSuccess }) => {
                 <div className="col-md-6 mb-3">
                   <label>Employee ID</label>
                   <input type="text" name="employee_id" className="form-control" onChange={handleChange} />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="department">Department</label>
+                  <select
+                    id="department"
+                    name="department"
+                    className="form-select"
+                    value={form.department || ""}
+                    onChange={handleChange}
+                    disabled={isLoadingDepartments}
+                  >
+                    <option value="">
+                      {isLoadingDepartments ? "Loading departments..." : "Select a department"}
+                    </option>
+                    {departments.map((department) => (
+                      <option key={department.id} value={department.id}>
+                        {department.name}
+                      </option>
+                    ))}
+                  </select>
+                  {departmentError && (
+                    <div className="text-danger small mt-1">{departmentError}</div>
+                  )}
                 </div>
               </div>
             </div>
