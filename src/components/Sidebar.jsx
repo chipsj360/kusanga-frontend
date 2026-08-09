@@ -116,6 +116,16 @@ const role = localStorage.getItem("role");
                     )}
                     {(role === "trainer" || role === "admin") && (
                     <li className="sidebar-menu__item">
+                    <Link to="/departments" className="sidebar-menu__link">
+                        <span className="icon">
+                        <i className="ph ph-buildings" />
+                        </span>
+                        <span className="text">Departments</span>
+                    </Link>
+                    </li>
+                    )}
+                    {(role === "trainer" || role === "admin") && (
+                    <li className="sidebar-menu__item">
                     <Link to="/modules" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-clipboard-text" />
