@@ -8,11 +8,34 @@ import '../assets/css/apexcharts.css'
 import '../assets/css/calendar.css'
 import '../assets/css/jquery-jvectormap-2.0.5.css'
 import '../assets/css/main.css'
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from '../api';
+import UserImg from "../assets/images/avatars/male-avatar.png";
 
 const Navbar=()=>{
 const navigate = useNavigate();
+const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getLoggedInUser = async () => {
+      try {
+        const response = await API.get("/api/auth/user/");
+        setUser(response.data.user ?? response.data);
+      } catch (error) {
+        console.error("Unable to load logged-in user:", error.response?.data);
+      }
+    };
+
+    getLoggedInUser();
+  }, []);
+
+  const userName =
+    user?.full_name ||
+    user?.name ||
+    [user?.first_name, user?.last_name].filter(Boolean).join(" ") ||
+    user?.username ||
+    "User";
 
   const logout = async () => {
     try {
@@ -51,190 +74,21 @@ const navigate = useNavigate();
               type="submit"
               className="input-icon text-xl d-flex text-gray-100 pointer-event-none"
             >
-              <i className="ph ph-magnifying-glass" />
+              {/* <i className="ph ph-magnifying-glass" /> */}
             </button>
-            <input
+            {/* <input
               type="text"
               className="form-control ps-40 h-40 border-transparent focus-border-main-600 bg-main-50 rounded-pill placeholder-15"
               placeholder="Search..."
-            />
+            /> */}
           </div>
         </form>
       </div>
       <div className="flex-align gap-16">
                 <div className="flex-align gap-8">
-                {/* Notification Start */}
-                <div className="dropdown">
-                    <button
-                    className="dropdown-btn shaking-animation text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    >
-                    <span className="position-relative">
-                        <i className="ph ph-bell" />
-                        <span className="alarm-notify position-absolute end-0" />
-                    </span>
-                    </button>
-                    <div className="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
-                    <div className="card border border-gray-100 rounded-12 box-shadow-custom p-0 overflow-hidden">
-                        <div className="card-body p-0">
-                        <div className="py-8 px-24 bg-main-600">
-                            <div className="flex-between">
-                            <h5 className="text-xl fw-semibold text-white mb-0">
-                                Notifications
-                            </h5>
-                            <div className="flex-align gap-12">
-                                <button
-                                type="button"
-                                className="bg-white rounded-6 text-sm px-8 py-2 hover-text-primary-600"
-                                >
-                                {" "}
-                                New{" "}
-                                </button>
-                                <button
-                                type="button"
-                                className="close-dropdown hover-scale-1 text-xl text-white"
-                                >
-                                <i className="ph ph-x" />
-                                </button>
-                            </div>
-                            </div>
-                        </div>
-                        <div className="p-24 max-h-270 overflow-y-auto scroll-sm">
-                            <div className="d-flex align-items-start gap-12">
-                            <img
-                                src="assets/images/thumbs/notification-img1.png"
-                                alt=""
-                                className="w-48 h-48 rounded-circle object-fit-cover"
-                            />
-                            <div className="border-bottom border-gray-100 mb-24 pb-24">
-                                <div className="flex-align gap-4">
-                                <a
-                                    href="#"
-                                    className="fw-medium text-15 mb-0 text-gray-300 hover-text-main-600 text-line-2"
-                                >
-                                    Ashwin Bose is requesting access to Design File -
-                                    Final Project.{" "}
-                                </a>
-                                {/* Three Dot Dropdown Start */}
-                                <div className="dropdown flex-shrink-0">
-                                    <button
-                                    className="text-gray-200 rounded-4"
-                                    type="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                    >
-                                    <i className="ph-fill ph-dots-three-outline" />
-                                    </button>
-                                    <div className="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                    <div className="card border border-gray-100 rounded-12 box-shadow-custom">
-                                        <div className="card-body p-12">
-                                        <div className="max-h-200 overflow-y-auto scroll-sm pe-8">
-                                            <ul>
-                                            <li className="mb-0">
-                                                <a
-                                                href="#"
-                                                className="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block"
-                                                >
-                                                <span className="text">
-                                                    Mark as read
-                                                </span>
-                                                </a>
-                                            </li>
-                                            <li className="mb-0">
-                                                <a
-                                                href="#"
-                                                className="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block"
-                                                >
-                                                <span className="text">
-                                                    Delete Notification
-                                                </span>
-                                                </a>
-                                            </li>
-                                            <li className="mb-0">
-                                                <a
-                                                href="#"
-                                                className="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block"
-                                                >
-                                                <span className="text">Report</span>
-                                                </a>
-                                            </li>
-                                            </ul>
-                                        </div>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                                {/* Three Dot Dropdown End */}
-                                </div>
-                                <div className="flex-align gap-6 mt-8">
-                                <img
-                                    src="assets/images/icons/google-drive.png"
-                                    alt=""
-                                />
-                                <div className="flex-align gap-4">
-                                    <p className="text-gray-900 text-sm text-line-1">
-                                    Design brief and ideas.txt
-                                    </p>
-                                    <span className="text-xs text-gray-200 flex-shrink-0">
-                                    2.2 MB
-                                    </span>
-                                </div>
-                                </div>
-                                <div className="mt-16 flex-align gap-8">
-                                <button
-                                    type="button"
-                                    className="btn btn-main py-8 text-15 fw-normal px-16"
-                                >
-                                    Accept
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-gray py-8 text-15 fw-normal px-16"
-                                >
-                                    Decline
-                                </button>
-                                </div>
-                                <span className="text-gray-200 text-13 mt-8">
-                                2 mins ago
-                                </span>
-                            </div>
-                            </div>
-                            <div className="d-flex align-items-start gap-12">
-                            <img
-                                src="assets/images/thumbs/notification-img2.png"
-                                alt=""
-                                className="w-48 h-48 rounded-circle object-fit-cover"
-                            />
-                            <div className="">
-                                <a
-                                href="#"
-                                className="fw-medium text-15 mb-0 text-gray-300 hover-text-main-600 text-line-2"
-                                >
-                                Patrick added a comment on Design Assets - Smart Tags
-                                file:
-                                </a>
-                                <span className="text-gray-200 text-13">
-                                2 mins ago
-                                </span>
-                            </div>
-                            </div>
-                        </div>
-                        <a
-                            href="#"
-                            className="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline"
-                        >
-                            {" "}
-                            View All{" "}
-                        </a>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                {/* Notification Start */}
+              
                 {/* Language Start */}
-                <div className="dropdown">
+                {/* <div className="dropdown">
                     <button
                     className="text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center"
                     type="button"
@@ -343,7 +197,7 @@ const navigate = useNavigate();
                         </div>
                     </div>
                     </div>
-                </div>
+                </div> */}
                 {/* Language Start */}
                 </div>
                 {/* User Profile Start */}
@@ -356,7 +210,7 @@ const navigate = useNavigate();
                 >
                     <span className="position-relative">
                     <img
-                        src="assets/images/thumbs/user-img.png"
+                        src={UserImg}
                         alt="Image"
                         className="h-32 w-32 rounded-circle"
                     />
@@ -368,14 +222,14 @@ const navigate = useNavigate();
                     <div className="card-body">
                         <div className="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
                         <img
-                            src="assets/images/thumbs/user-img.png"
+                            src={UserImg}
                             alt=""
                             className="w-54 h-54 rounded-circle"
                         />
-                        <div className="">
-                            <h4 className="mb-0">Michel John</h4>
+                        <div>
+                            <h4 className="mb-0">{userName}</h4>
                             <p className="fw-medium text-13 text-gray-200">
-                            examplemail@mail.com
+                            {user?.email || ""}
                             </p>
                         </div>
                         </div>
