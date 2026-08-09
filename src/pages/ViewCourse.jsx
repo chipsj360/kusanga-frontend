@@ -198,6 +198,8 @@ const handleEnroll = async (e) => {
                           <td style={{ color: "#000", backgroundColor: "#fff" }}>
                             {m.progress_status === "completed" ? (
                               <span className="badge bg-success">Completed</span>
+                            ) : m.progress_status === "failed" ? (
+                              <span className="badge bg-danger">Failed</span>
                             ) : m.progress_status === "in_progress" ? (
                               <span className="badge bg-warning text-dark">Attempted</span>
                             ) : (
