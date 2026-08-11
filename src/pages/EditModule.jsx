@@ -3,17 +3,20 @@ import { useState } from "react";
 import API from "../api";
 import "../assets/css/bootstrap.min.css";
 
+const MODULE_TYPES = ["video", "pdf", "scorm"];
+
 const EditModule = ({ module, onClose, onSuccess }) => {
   const [form, setForm] = useState({
     title: module.title,
     description: module.description,
     course: module.course, // keep course ID
     order: module.order,
-    content_type: module.content_type || "video",
+    content_type: MODULE_TYPES.includes(module.content_type)
+      ? module.content_type
+      : "",
     file: null,
     scorm_package: null,
     video_url: module.video_url || "",
-    text_content: module.text_content || "",
   });
 
   const [saving, setSaving] = useState(false);
@@ -47,10 +50,6 @@ const EditModule = ({ module, onClose, onSuccess }) => {
 
       if (form.content_type === "scorm" && form.scorm_package instanceof File) {
         data.append("scorm_package", form.scorm_package);
-      }
-
-      if (form.content_type === "text") {
-        data.append("text_content", form.text_content || "");
       }
 
       await API.put(`/api/modules/${module.id}/`, data, {
@@ -136,11 +135,12 @@ const EditModule = ({ module, onClose, onSuccess }) => {
                   className="form-select text-dark bg-white"
                   value={form.content_type}
                   onChange={handleChange}
+                  required
                 >
+                  <option value="" disabled>Select a content type</option>
                   <option value="video">Video</option>
                   <option value="pdf">PDF</option>
                   <option value="scorm">SCORM</option>
-                  <option value="text">Text</option>
                 </select>
               </div>
 
@@ -193,19 +193,6 @@ const EditModule = ({ module, onClose, onSuccess }) => {
                 </div>
               )}
 
-              {form.content_type === "text" && (
-                <div className="mb-3">
-                  <label>Text / HTML Content</label>
-                  <textarea
-                    className="form-control text-dark bg-white"
-                    rows="6"
-                    name="text_content"
-                    value={form.text_content}
-                    onChange={handleChange}
-                    required
-                  ></textarea>
-                </div>
-              )}
             </div>
 
             <div className="modal-footer">
