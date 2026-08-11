@@ -1,5 +1,6 @@
 import "../assets/css/Login.css";
 import "../assets/css/bootstrap.min.css";
+import Elearning from "../assets/images/logo/Elearning.jpg";
 import API from "../api";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
@@ -40,7 +41,7 @@ const Login = () => {
                 <div className="col-12 col-xl-4 mb-4 mb-xl-0 text-center text-xl-start">
                   <div className="book-image-box mx-auto mx-xl-0">
                     <img
-                      src="../assets/images/bookstack.jp"
+                      src={Elearning}
                       alt="Books"
                       className="img-fluid book-image"
                       onError={(e) => {
@@ -54,21 +55,21 @@ const Login = () => {
                 <div className="col-12 col-xl-8">
                   <div className="brand-row mb-3 justify-content-center justify-content-xl-start">
                     <span className="brand-icon">📖</span>
-                    <span className="brand-text">The Editorial Scholar</span>
+                    <span className="brand-text">Kusanga E Learning Platform</span>
                   </div>
 
                   <h1 className="hero-title text-center text-xl-start">
-                    Curating the <br />
-                    <span className="hero-italic">Academic</span> Future.
+                    Skills That Move <br />
+                    <span className="hero-italic">Work Forward.</span>
                   </h1>
 
                   <p className="hero-subtitle text-center text-xl-start">
-                    Access your premium workspace for high-level research and
-                    professional certification. Enter your credentials to
-                    continue your journey.
+                    Empower every team from frontline professionals to future leaderswith
+                    practical courses, industry-recognized certifications, and learning
+                    designed for real-world impact.
                   </p>
 
-                  <div className="stats-row justify-content-center justify-content-xl-start">
+                  {/* <div className="stats-row justify-content-center justify-content-xl-start">
                     <div className="stat-card">
                       <h3>420+</h3>
                       <p>JOURNALS PUBLISHED</p>
@@ -77,7 +78,7 @@ const Login = () => {
                       <h3>12k</h3>
                       <p>SCHOLARS ACTIVE</p>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -127,17 +128,17 @@ const Login = () => {
                 </div>
 
                 <button type="submit" className="btn scholar-primary-btn w-100">
-                  Sign In to Repository
+                  Login
                 </button>
               </form>
 
-              <div className="divider-wrap">
+              {/* <div className="divider-wrap">
                 <span>NEW TO THE PLATFORM?</span>
               </div>
 
               <Link to="/signup" className="btn scholar-secondary-btn w-100">
                 Create Scholar Account
-              </Link>
+              </Link> */}
 
               <p className="terms-text">
                 By signing in, you agree to our <a href="#">Terms of Service</a> and{" "}

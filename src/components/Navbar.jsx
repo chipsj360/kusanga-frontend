@@ -246,7 +246,7 @@ const [user, setUser] = useState(null);
                             </a>
                         </li>
 
-                        <li className="mb-4">
+                        {/* <li className="mb-4">
                             <a
                             href="analytics.html"
                             className="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15"
@@ -256,8 +256,8 @@ const [user, setUser] = useState(null);
                             </span>
                             <span className="text">Daily Activity</span>
                             </a>
-                        </li>
-                        <li className="mb-4">
+                        </li> */}
+                        {/* <li className="mb-4">
                             <a
                             href="message.html"
                             className="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15"
@@ -267,8 +267,8 @@ const [user, setUser] = useState(null);
                             </span>
                             <span className="text">Inbox</span>
                             </a>
-                        </li>
-                        <li className="mb-4">
+                        </li> */}
+                        {/* <li className="mb-4">
                             <a
                             href="email.html"
                             className="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15"
@@ -278,7 +278,7 @@ const [user, setUser] = useState(null);
                             </span>
                             <span className="text">Email</span>
                             </a>
-                        </li>
+                        </li> */}
                         <li className="pt-8 border-top border-gray-100">
                         <div
                             className="py-12 px-20 text-danger-600 flex-align gap-8 cursor-pointer"
