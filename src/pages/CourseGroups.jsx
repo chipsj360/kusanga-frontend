@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PageTitle from "../components/PageTitle";
 import API from "../api";
 
 const CourseGroups = () => {
@@ -175,209 +176,212 @@ const CourseGroups = () => {
   );
 
   return (
-    <div className="container mt-4 mb-5">
-      <div className="d-flex justify-content-between align-items-center">
-        <h3>Course Groups</h3>
-        <button className="btn btn-outline-secondary btn-sm" onClick={fetchAll}>
-          Refresh
-        </button>
-      </div>
-
-      {error && <div className="alert alert-danger mt-3">{error}</div>}
-      {success && <div className="alert alert-success mt-3">{success}</div>}
-
-      <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
-        <input
-          type="search"
-          placeholder="Search groups, courses, or students"
-          className="form-control text-dark border rounded"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      <div className="row mt-3">
-        {/* LEFT: Create + Group list */}
-        <div className="col-md-4">
-          <div className="card mb-3">
-            <div className="card-header fw-bold">Create Group</div>
-            <div className="card-body">
-              <form onSubmit={createGroup}>
-                <div className="mb-2">
-                  <label className="form-label">Name</label>
-                  <input
-                    className="form-control text-dark bg-white"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="form-label">Description</label>
-                  <textarea
-                    className="form-control text-dark bg-white"
-                    rows="3"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
-                <button className="btn btn-primary w-100">Create</button>
-              </form>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-header fw-bold">Groups</div>
-            <div className="list-group list-group-flush" style={{ maxHeight: 420, overflowY: "auto" }}>
-              {filteredGroups.map((g) => (
-                <button
-                  key={g.id}
-                  className={`list-group-item list-group-item-action ${selectedGroup?.id === g.id ? "active" : ""}`}
-                  onClick={() => openGroup(g)}
-                >
-                  <div className="fw-semibold">{g.name}</div>
-                  <small className="opacity-75">{(g.courses || []).length} course(s)</small>
-                </button>
-              ))}
-              {!filteredGroups.length && (
-                <div className="p-3 text-muted">
-                  {groups.length ? "No groups match your search." : "No groups yet."}
-                </div>
-              )}
-            </div>
-          </div>
+     <>
+      <PageTitle title="Course Groups" />
+      <div className="container mt-4 mb-5">
+        <div className="d-flex justify-content-between align-items-center">
+          <h3>Course Groups</h3>
+          <button className="btn btn-outline-secondary btn-sm" onClick={fetchAll}>
+            Refresh
+          </button>
         </div>
 
-        {/* RIGHT: Group editor */}
-        <div className="col-md-8">
-          {!selectedGroup ? (
-            <div className="card">
-              <div className="card-body text-muted">Select a group to manage its courses and assignments.</div>
-            </div>
-          ) : (
-            <>
-              {/* Group courses */}
-              <div className="card mb-3">
-                <div className="card-header d-flex justify-content-between align-items-center">
-                  <div className="fw-bold">Group Courses — {selectedGroup.name}</div>
-                  <button className="btn btn-success btn-sm" onClick={saveGroupCourses}>
-                    Save Courses
-                  </button>
-                </div>
-                <div className="card-body" style={{ maxHeight: 300, overflowY: "auto" }}>
-                  {filteredCourses.map((c) => (
-                    <div className="form-check" key={c.id}>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id={`course-${c.id}`}
-                        checked={groupCourseIds.includes(c.id)}
-                        onChange={() => toggleCourseInGroup(c.id)}
-                      />
-                      <label className="form-check-label" htmlFor={`course-${c.id}`}>
-                        <span className="fw-semibold">{c.title}</span>{" "}
-                        <small className="text-muted">({c.course_type})</small>
-                      </label>
-                    </div>
-                  ))}
-                  {!filteredCourses.length && (
-                    <div className="text-muted">
-                      {courses.length ? "No courses match your search." : "No courses found."}
-                    </div>
-                  )}
-                </div>
-              </div>
+        {error && <div className="alert alert-danger mt-3">{error}</div>}
+        {success && <div className="alert alert-success mt-3">{success}</div>}
 
-              {/* Assign group */}
-              <div className="card mb-3">
-                <div className="card-header fw-bold">Assign Group to Students</div>
-                <div className="card-body">
-                  <div className="row g-2 align-items-end">
-                    <div className="col-md-4">
-                      <label className="form-label">Due Date (optional)</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                      />
-                    </div>
-                    <div className="col-md-8 d-flex justify-content-end">
-                      <button className="btn btn-primary" onClick={assignGroup}>
-                        Assign to Selected ({selectedStudentIds.length})
-                      </button>
-                    </div>
+        <div className="mb-3" style={{ width: "100%", maxWidth: "420px" }}>
+          <input
+            type="search"
+            placeholder="Search groups, courses, or students"
+            className="form-control text-dark border rounded"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="row mt-3">
+          {/* LEFT: Create + Group list */}
+          <div className="col-md-4">
+            <div className="card mb-3">
+              <div className="card-header fw-bold">Create Group</div>
+              <div className="card-body">
+                <form onSubmit={createGroup}>
+                  <div className="mb-2">
+                    <label className="form-label">Name</label>
+                    <input
+                      className="form-control text-dark bg-white"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
                   </div>
+                  <div className="mb-2">
+                    <label className="form-label">Description</label>
+                    <textarea
+                      className="form-control text-dark bg-white"
+                      rows="3"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+                  <button className="btn btn-primary w-100">Create</button>
+                </form>
+              </div>
+            </div>
 
-                  <hr />
+            <div className="card">
+              <div className="card-header fw-bold">Groups</div>
+              <div className="list-group list-group-flush" style={{ maxHeight: 420, overflowY: "auto" }}>
+                {filteredGroups.map((g) => (
+                  <button
+                    key={g.id}
+                    className={`list-group-item list-group-item-action ${selectedGroup?.id === g.id ? "active" : ""}`}
+                    onClick={() => openGroup(g)}
+                  >
+                    <div className="fw-semibold">{g.name}</div>
+                    <small className="opacity-75">{(g.courses || []).length} course(s)</small>
+                  </button>
+                ))}
+                {!filteredGroups.length && (
+                  <div className="p-3 text-muted">
+                    {groups.length ? "No groups match your search." : "No groups yet."}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
-                  <div style={{ maxHeight: 260, overflowY: "auto" }} className="border rounded p-2">
-                    {filteredStudents.map((s) => (
-                      <div className="form-check py-1" key={s.id}>
+          {/* RIGHT: Group editor */}
+          <div className="col-md-8">
+            {!selectedGroup ? (
+              <div className="card">
+                <div className="card-body text-muted">Select a group to manage its courses and assignments.</div>
+              </div>
+            ) : (
+              <>
+                {/* Group courses */}
+                <div className="card mb-3">
+                  <div className="card-header d-flex justify-content-between align-items-center">
+                    <div className="fw-bold">Group Courses — {selectedGroup.name}</div>
+                    <button className="btn btn-success btn-sm" onClick={saveGroupCourses}>
+                      Save Courses
+                    </button>
+                  </div>
+                  <div className="card-body" style={{ maxHeight: 300, overflowY: "auto" }}>
+                    {filteredCourses.map((c) => (
+                      <div className="form-check" key={c.id}>
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id={`student-${s.id}`}
-                          checked={selectedStudentIds.includes(s.id)}
-                          onChange={() => toggleStudent(s.id)}
+                          id={`course-${c.id}`}
+                          checked={groupCourseIds.includes(c.id)}
+                          onChange={() => toggleCourseInGroup(c.id)}
                         />
-                        <label className="form-check-label" htmlFor={`student-${s.id}`}>
-                          <span className="fw-semibold">{s.full_name || s.username}</span>
-                          {s.email ? <span className="text-muted"> — {s.email}</span> : null}
+                        <label className="form-check-label" htmlFor={`course-${c.id}`}>
+                          <span className="fw-semibold">{c.title}</span>{" "}
+                          <small className="text-muted">({c.course_type})</small>
                         </label>
                       </div>
                     ))}
-                    {!filteredStudents.length && (
+                    {!filteredCourses.length && (
                       <div className="text-muted">
-                        {students.length ? "No students match your search." : "No students found."}
-                      </div>
-                    )}
-                  </div>
-
-                  <small className="text-muted d-block mt-2">
-                    Assigning a group automatically creates <b>Enrollment</b> records for each course in the group.
-                  </small>
-                </div>
-              </div>
-
-              {/* Unassign helper (manual) */}
-              <div className="card">
-                <div className="card-header fw-bold">Unassign Group (Quick)</div>
-                <div className="card-body">
-                  <p className="text-muted mb-2">
-                    Use this to unassign a group from a student. By default, we keep enrollments to preserve progress.
-                  </p>
-
-                  <div style={{ maxHeight: 220, overflowY: "auto" }} className="border rounded p-2">
-                    {filteredStudents.map((s) => (
-                      <div key={s.id} className="d-flex justify-content-between align-items-center py-1">
-                        <div>
-                          <span className="fw-semibold">{s.full_name || s.username}</span>
-                          {s.email ? <small className="text-muted"> — {s.email}</small> : null}
-                        </div>
-                        <div>
-                          <button
-                            className="btn btn-outline-danger btn-sm"
-                            onClick={() => unassignGroupFromStudent(s.id, false)}
-                          >
-                            Unassign
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    {!filteredStudents.length && (
-                      <div className="text-muted">
-                        {students.length ? "No students match your search." : "No students found."}
+                        {courses.length ? "No courses match your search." : "No courses found."}
                       </div>
                     )}
                   </div>
                 </div>
-              </div>
-            </>
-          )}
+
+                {/* Assign group */}
+                <div className="card mb-3">
+                  <div className="card-header fw-bold">Assign Group to Students</div>
+                  <div className="card-body">
+                    <div className="row g-2 align-items-end">
+                      <div className="col-md-4">
+                        <label className="form-label">Due Date (optional)</label>
+                        <input
+                          type="date"
+                          className="form-control"
+                          value={dueDate}
+                          onChange={(e) => setDueDate(e.target.value)}
+                        />
+                      </div>
+                      <div className="col-md-8 d-flex justify-content-end">
+                        <button className="btn btn-primary" onClick={assignGroup}>
+                          Assign to Selected ({selectedStudentIds.length})
+                        </button>
+                      </div>
+                    </div>
+
+                    <hr />
+
+                    <div style={{ maxHeight: 260, overflowY: "auto" }} className="border rounded p-2">
+                      {filteredStudents.map((s) => (
+                        <div className="form-check py-1" key={s.id}>
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`student-${s.id}`}
+                            checked={selectedStudentIds.includes(s.id)}
+                            onChange={() => toggleStudent(s.id)}
+                          />
+                          <label className="form-check-label" htmlFor={`student-${s.id}`}>
+                            <span className="fw-semibold">{s.full_name || s.username}</span>
+                            {s.email ? <span className="text-muted"> — {s.email}</span> : null}
+                          </label>
+                        </div>
+                      ))}
+                      {!filteredStudents.length && (
+                        <div className="text-muted">
+                          {students.length ? "No students match your search." : "No students found."}
+                        </div>
+                      )}
+                    </div>
+
+                    <small className="text-muted d-block mt-2">
+                      Assigning a group automatically creates <b>Enrollment</b> records for each course in the group.
+                    </small>
+                  </div>
+                </div>
+
+                {/* Unassign helper (manual) */}
+                <div className="card">
+                  <div className="card-header fw-bold">Unassign Group (Quick)</div>
+                  <div className="card-body">
+                    <p className="text-muted mb-2">
+                      Use this to unassign a group from a student. By default, we keep enrollments to preserve progress.
+                    </p>
+
+                    <div style={{ maxHeight: 220, overflowY: "auto" }} className="border rounded p-2">
+                      {filteredStudents.map((s) => (
+                        <div key={s.id} className="d-flex justify-content-between align-items-center py-1">
+                          <div>
+                            <span className="fw-semibold">{s.full_name || s.username}</span>
+                            {s.email ? <small className="text-muted"> — {s.email}</small> : null}
+                          </div>
+                          <div>
+                            <button
+                              className="btn btn-outline-danger btn-sm"
+                              onClick={() => unassignGroupFromStudent(s.id, false)}
+                            >
+                              Unassign
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      {!filteredStudents.length && (
+                        <div className="text-muted">
+                          {students.length ? "No students match your search." : "No students found."}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+     </>
   );
 };
 

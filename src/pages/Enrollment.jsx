@@ -1,4 +1,5 @@
 import API from "../api";
+import PageTitle from "../components/PageTitle";
 import { useEffect, useState } from "react";
 
 const Enrollment = () => {
@@ -110,7 +111,9 @@ const Enrollment = () => {
   if (!canManage) return <div className="container mt-4">Access denied.</div>;
 
   return (
-    <div className="container mt-4 mb-5">
+   <>
+    <PageTitle title="Enrollments" />
+      <div className="container mt-4 mb-5">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5 className="fw-bold mb-0">Enrollments</h5>
         <button className="btn btn-outline-secondary btn-sm" onClick={fetchEnrollments}>
@@ -279,6 +282,7 @@ const Enrollment = () => {
         </p>
       )}
     </div>
+   </>
   );
 };
 
