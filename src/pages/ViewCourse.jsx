@@ -131,8 +131,134 @@ const handleEnroll = async (e) => {
 
   return (
     <>
+      <style>{`
+        .view-course-modal .modal-title,
+        .view-course-modal .modal-body,
+        .course-modules-table td {
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
+        .course-modules-table th,
+        .course-modules-table td {
+          vertical-align: middle;
+        }
+
+        @media (max-width: 767.98px) {
+          .view-course-modal .modal-header {
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+
+          .view-course-modal .modal-title {
+            min-width: 0;
+            font-size: 1rem;
+          }
+
+          .view-course-module-toolbar,
+          .view-course-module-toolbar > div {
+            width: 100%;
+          }
+
+          .view-course-module-toolbar > div > .btn {
+            flex: 1 1 auto;
+          }
+
+          .course-modules-table-wrapper {
+            overflow-x: visible;
+          }
+
+          .course-modules-table,
+          .course-modules-table tbody,
+          .course-modules-table tr,
+          .course-modules-table td {
+            display: block;
+            width: 100%;
+          }
+
+          .course-modules-table thead {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+          }
+
+          .course-modules-table tbody tr {
+            margin-bottom: 0.875rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            overflow: hidden;
+          }
+
+          .course-modules-table tbody tr:last-child {
+            margin-bottom: 0;
+          }
+
+          .course-modules-table tbody td {
+            display: grid;
+            grid-template-columns: minmax(6.5rem, 35%) minmax(0, 1fr);
+            gap: 0.75rem;
+            align-items: center;
+            padding: 0.75rem !important;
+            text-align: left !important;
+            border: 0 !important;
+            border-top: 1px solid #dee2e6 !important;
+          }
+
+          .course-modules-table tbody td:first-child {
+            border-top: 0 !important;
+          }
+
+          .course-modules-table tbody td::before {
+            content: attr(data-label);
+            color: #6c757d;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+          }
+
+          .course-modules-table__actions > div {
+            min-width: 0;
+          }
+
+          .view-course-modal__footer,
+          .view-course-modal__footer > div {
+            width: 100%;
+          }
+
+          .view-course-modal__footer > div > .btn,
+          .view-course-modal__footer > .btn {
+            flex: 1 1 auto;
+            justify-content: center;
+            margin-right: 0 !important;
+          }
+        }
+
+        @media (max-width: 374.98px) {
+          .course-modules-table tbody td {
+            grid-template-columns: 1fr;
+            gap: 0.25rem;
+          }
+
+          .view-course-module-toolbar > div,
+          .view-course-modal__footer > div {
+            flex-direction: column;
+          }
+
+          .view-course-module-toolbar .btn,
+          .view-course-modal__footer .btn {
+            width: 100%;
+          }
+        }
+      `}</style>
       {/* --- Course Modal --- */}
-      <div className="modal show d-block" tabIndex="-1">
+      <div className="view-course-modal modal show d-block" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
           <div className="modal-content rounded-3 shadow">
             <div className="modal-header bg-light">
@@ -161,7 +287,7 @@ const handleEnroll = async (e) => {
 
                   {/* --- Modules Section --- */}
                 {canManage && (
-                  <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                  <div className="view-course-module-toolbar d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
                     <h5 className="fw-bold mb-0">Modules</h5>
 
                     <div className="d-flex flex-wrap gap-2">
@@ -189,8 +315,8 @@ const handleEnroll = async (e) => {
                 )}
 
               {modules.length > 0 ? (
-                <div className="table-responsive">
-                <table className="table table-striped table-bordered align-middle">
+                <div className="course-modules-table-wrapper table-responsive">
+                <table className="course-modules-table table table-striped table-bordered align-middle">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -204,11 +330,11 @@ const handleEnroll = async (e) => {
                   <tbody>
                     {modules.map((m, index) => (
                       <tr key={m.id}>
-                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{index + 1}</td>
-                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{m.title}</td>
-                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{m.description}</td>
-                        <td style={{ color: "#000", backgroundColor: "#fff" }}>{m.order}</td>
-                          <td style={{ color: "#000", backgroundColor: "#fff" }}>
+                        <td data-label="#" style={{ color: "#000", backgroundColor: "#fff" }}>{index + 1}</td>
+                        <td data-label="Title" style={{ color: "#000", backgroundColor: "#fff" }}>{m.title}</td>
+                        <td data-label="Description" style={{ color: "#000", backgroundColor: "#fff" }}>{m.description}</td>
+                        <td data-label="Order" style={{ color: "#000", backgroundColor: "#fff" }}>{m.order}</td>
+                          <td data-label="Status" style={{ color: "#000", backgroundColor: "#fff" }}>
                             {m.progress_status === "completed" ? (
                               <span className="badge bg-success">Completed</span>
                             ) : m.progress_status === "failed" ? (
@@ -219,7 +345,7 @@ const handleEnroll = async (e) => {
                               <span className="badge bg-secondary">Not Attempted</span>
                             )}
                           </td>
-                        <td>
+                        <td data-label="Actions" className="course-modules-table__actions">
                           <div className="d-flex flex-wrap gap-2">
                           <button
                             type="button"
@@ -283,7 +409,7 @@ const handleEnroll = async (e) => {
               )}
             </div>
 
-            <div className="modal-footer d-flex flex-wrap justify-content-between gap-2">
+            <div className="view-course-modal__footer modal-footer d-flex flex-wrap justify-content-between gap-2">
               { canManage &&(<div className="d-flex flex-wrap gap-2">
                 <button
                   type="button"
