@@ -20,7 +20,7 @@ const canManage = role === "trainer" || role === "admin";
   const [enrollError, setEnrollError] = useState("");
   const [enrollSuccess, setEnrollSuccess] = useState("");
 
-  
+
 
 
 
@@ -83,7 +83,7 @@ const handleEnroll = async (e) => {
   // Fetch all modules for the selected course
   useEffect(() => {
     fetchModules();
-    
+
   }, [course]);
 
 
@@ -133,13 +133,19 @@ const handleEnroll = async (e) => {
     <>
       {/* --- Course Modal --- */}
       <div className="modal show d-block" tabIndex="-1">
-        <div className="modal-dialog modal-dialog-centered modal-xl">
+        <div className="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
           <div className="modal-content rounded-3 shadow">
             <div className="modal-header bg-light">
               <h5 className="modal-title fw-bold text-dark">
                 {course.title} — Details
               </h5>
-              <button type="button" className="btn-close" onClick={onClose}></button>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={onClose}
+                title="Close course details"
+                aria-label="Close course details"
+              ></button>
             </div>
 
             <div className="modal-body text-dark">
@@ -155,29 +161,36 @@ const handleEnroll = async (e) => {
 
                   {/* --- Modules Section --- */}
                 {canManage && (
-                  <div className="d-flex justify-content-between align-items-center mb-2">
+                  <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
                     <h5 className="fw-bold mb-0">Modules</h5>
 
-                    <div className="d-flex gap-2">
+                    <div className="d-flex flex-wrap gap-2">
                       <button
-                        className="btn btn-primary btn-sm"
+                        type="button"
+                        className="btn btn-primary btn-sm d-inline-flex align-items-center gap-1"
                         onClick={openEnrollModal}
+                        title="Enroll a student in this course"
                       >
-                        Enroll Student
+                        <i className="ph ph-user-plus" aria-hidden="true"></i>
+                        <span>Enroll Student</span>
                       </button>
 
                       <button
-                        className="btn btn-danger btn-sm"
+                        type="button"
+                        className="btn btn-danger btn-sm d-inline-flex align-items-center gap-1"
                         onClick={() => setShowAddModule(true)}
+                        title="Add a module to this course"
                       >
-                        + Add Module
+                        <i className="ph ph-plus-circle" aria-hidden="true"></i>
+                        <span>Add Module</span>
                       </button>
                     </div>
                   </div>
                 )}
 
               {modules.length > 0 ? (
-                <table className="table table-striped table-bordered">
+                <div className="table-responsive">
+                <table className="table table-striped table-bordered align-middle">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -207,56 +220,98 @@ const handleEnroll = async (e) => {
                             )}
                           </td>
                         <td>
+                          <div className="d-flex flex-wrap gap-2">
                           <button
-                            className="btn btn-success btn-sm me-2"
+                            type="button"
+                            className="btn btn-success btn-sm d-inline-flex align-items-center justify-content-center p-0"
+                            style={{ width: "40px", height: "40px", minWidth: "40px" }}
                             onClick={() => setSelectedModule(m)} // Launch module
+                            title="Launch module"
+                            aria-label={`Launch ${m.title}`}
                           >
-                            Launch
+                            <i
+                              className="ph ph-play-circle"
+                              aria-hidden="true"
+                              style={{ fontSize: "18px" }}
+                            ></i>
                           </button>
                         {canManage &&(
                           <>
 
                            <button
-                            className="btn btn-warning btn-sm me-2"
+                            type="button"
+                            className="btn btn-warning btn-sm d-inline-flex align-items-center justify-content-center p-0"
+                            style={{ width: "40px", height: "40px", minWidth: "40px" }}
                             onClick={() => {
                               setSelectedModule(m);
                               setShowEditModule(true);
                             }}
+                            title="Edit module"
+                            aria-label={`Edit ${m.title}`}
                           >
-                            Edit
+                            <i
+                              className="ph ph-pencil-simple"
+                              aria-hidden="true"
+                              style={{ fontSize: "18px" }}
+                            ></i>
                           </button>
                           <button
-                            className="btn btn-danger btn-sm"
+                            type="button"
+                            className="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center p-0"
+                            style={{ width: "40px", height: "40px", minWidth: "40px" }}
                             onClick={() => handleDeleteModule(m.id)}
+                            title="Delete module"
+                            aria-label={`Delete ${m.title}`}
                           >
-                            Delete
+                            <i
+                              className="ph ph-trash"
+                              aria-hidden="true"
+                              style={{ fontSize: "18px" }}
+                            ></i>
                           </button>
                           </>
                           )}
+                          </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                </div>
               ) : (
                 <p className="text-muted">No modules added yet.</p>
               )}
             </div>
 
-            <div className="modal-footer d-flex justify-content-between">
-              { canManage &&(<div>
-                <button className="btn btn-warning me-2" onClick={onEdit}>
-                  Edit Course
+            <div className="modal-footer d-flex flex-wrap justify-content-between gap-2">
+              { canManage &&(<div className="d-flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="btn btn-warning me-2 d-inline-flex align-items-center gap-1"
+                  onClick={onEdit}
+                  title="Edit course details"
+                >
+                  <i className="ph ph-pencil-simple" aria-hidden="true"></i>
+                  <span>Edit Course</span>
                 </button>
                 <button
-                  className="btn btn-danger"
+                  type="button"
+                  className="btn btn-danger d-inline-flex align-items-center gap-1"
                   onClick={() => onDelete(course.id)}
+                  title="Delete this course"
                 >
-                  Delete Course
+                  <i className="ph ph-trash" aria-hidden="true"></i>
+                  <span>Delete Course</span>
                 </button>
               </div> )}
-              <button className="btn btn-secondary" onClick={onClose}>
-                Close
+              <button
+                type="button"
+                className="btn btn-secondary d-inline-flex align-items-center gap-1"
+                onClick={onClose}
+                title="Close course details"
+              >
+                <i className="ph ph-x" aria-hidden="true"></i>
+                <span>Close</span>
               </button>
             </div>
           </div>
@@ -284,6 +339,8 @@ const handleEnroll = async (e) => {
                     type="button"
                     className="btn-close"
                     onClick={() => setShowEditModule(false)}
+                    title="Close edit module form"
+                    aria-label="Close edit module form"
                   ></button>
                 </div>
                 <div className="modal-body">
@@ -321,15 +378,22 @@ const handleEnroll = async (e) => {
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button type="submit" className="btn btn-success">
-                    Save Changes
+                  <button
+                    type="submit"
+                    className="btn btn-success d-inline-flex align-items-center gap-1"
+                    title="Save module changes"
+                  >
+                    <i className="ph ph-floppy-disk" aria-hidden="true"></i>
+                    <span>Save Changes</span>
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary d-inline-flex align-items-center gap-1"
                     onClick={() => setShowEditModule(false)}
+                    title="Cancel editing"
                   >
-                    Cancel
+                    <i className="ph ph-x" aria-hidden="true"></i>
+                    <span>Cancel</span>
                   </button>
                 </div>
               </form>
@@ -364,6 +428,8 @@ const handleEnroll = async (e) => {
                     type="button"
                     className="btn-close"
                     onClick={() => setShowEnrollModal(false)}
+                    title="Close enrollment form"
+                    aria-label="Close enrollment form"
                   ></button>
                 </div>
 
@@ -409,18 +475,22 @@ const handleEnroll = async (e) => {
                 <div className="modal-footer">
                   <button
                     type="submit"
-                    className="btn btn-success"
+                    className="btn btn-success d-inline-flex align-items-center gap-1"
                     disabled={enrolling}
+                    title="Enroll the selected student"
                   >
-                    {enrolling ? "Enrolling..." : "Enroll"}
+                    <i className="ph ph-user-plus" aria-hidden="true"></i>
+                    <span>{enrolling ? "Enrolling..." : "Enroll"}</span>
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary d-inline-flex align-items-center gap-1"
                     onClick={() => setShowEnrollModal(false)}
                     disabled={enrolling}
+                    title="Cancel enrollment"
                   >
-                    Cancel
+                    <i className="ph ph-x" aria-hidden="true"></i>
+                    <span>Cancel</span>
                   </button>
                 </div>
               </form>

@@ -107,6 +107,112 @@ const TrainingRecords = () => {
   return (
      <>
     <PageTitle title="Training Records" />
+    <style>{`
+      .training-record-group__toggle,
+      .training-record-group__identity,
+      .training-record-group__identity > div {
+        min-width: 0;
+      }
+
+      .training-record-group__name,
+      .training-record-group__username,
+      .training-record-table td {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .training-record-group__count {
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      .training-record-table th,
+      .training-record-table td {
+        vertical-align: middle;
+      }
+
+      @media (max-width: 767.98px) {
+        .training-record-group__toggle {
+          align-items: flex-start !important;
+          flex-wrap: wrap;
+          padding: 0.875rem !important;
+        }
+
+        .training-record-group__identity {
+          flex: 1 1 calc(100% - 2rem);
+        }
+
+        .training-record-group__count {
+          margin-left: 1.5rem;
+        }
+
+        .training-record-table-wrapper {
+          overflow-x: visible;
+          padding: 0.75rem;
+        }
+
+        .training-record-table,
+        .training-record-table tbody,
+        .training-record-table tr,
+        .training-record-table td {
+          display: block;
+          width: 100%;
+        }
+
+        .training-record-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        .training-record-table tbody tr {
+          margin-bottom: 0.75rem;
+          border: 1px solid #dee2e6;
+          border-radius: 0.5rem;
+          overflow: hidden;
+        }
+
+        .training-record-table tbody tr:last-child {
+          margin-bottom: 0;
+        }
+
+        .training-record-table tbody td {
+          display: grid;
+          grid-template-columns: minmax(7rem, 40%) minmax(0, 1fr);
+          gap: 0.75rem;
+          align-items: center;
+          padding: 0.75rem !important;
+          text-align: left !important;
+          border-top: 1px solid #dee2e6;
+        }
+
+        .training-record-table tbody td:first-child {
+          border-top: 0;
+        }
+
+        .training-record-table tbody td::before {
+          content: attr(data-label);
+          color: #6c757d;
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.02em;
+          text-transform: uppercase;
+        }
+      }
+
+      @media (max-width: 374.98px) {
+        .training-record-table tbody td {
+          grid-template-columns: 1fr;
+          gap: 0.25rem;
+        }
+      }
+    `}</style>
     <div className="container mt-4 mb-5">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5 className="fw-bold mb-0">Training Records</h5>
@@ -234,26 +340,26 @@ const TrainingRecords = () => {
             >
               <button
                 type="button"
-                className="bg-light border-0 px-3 py-3 w-100 d-flex justify-content-between align-items-center gap-3 text-start"
+                className="training-record-group__toggle bg-light border-0 px-3 py-3 w-100 d-flex justify-content-between align-items-center gap-3 text-start"
                 onClick={() => toggleUserRecords(userKey)}
                 aria-expanded={!isCollapsed}
                 aria-controls={panelId}
               >
-                <div className="d-flex align-items-center gap-2">
+                <div className="training-record-group__identity d-flex align-items-center gap-2">
                   <span aria-hidden="true" style={{ width: "1rem" }}>
                     {isCollapsed ? "▸" : "▾"}
                   </span>
                   <div>
-                    <div className="fw-semibold">
+                    <div className="training-record-group__name fw-semibold">
                       {group.fullName || group.username || "Unknown user"}
                     </div>
-                    <small className="text-muted">
+                    <small className="training-record-group__username text-muted d-block">
                       {group.username || "No username available"}
                     </small>
                   </div>
                 </div>
                 <span
-                  className="badge text-dark rounded-0"
+                  className="training-record-group__count badge text-dark rounded-0"
                   style={{ backgroundColor: "#e5e5e5" }}
                 >
                   {group.records.length}{" "}
@@ -263,10 +369,10 @@ const TrainingRecords = () => {
 
               <div
                 id={panelId}
-                className="table-responsive"
+                className="training-record-table-wrapper table-responsive"
                 hidden={isCollapsed}
               >
-                <table className="table align-middle mb-0">
+                <table className="training-record-table table align-middle mb-0">
                   <thead>
                     <tr>
                       <th className="ps-3">#</th>
@@ -280,10 +386,14 @@ const TrainingRecords = () => {
                   <tbody>
                     {group.records.map((record, index) => (
                       <tr key={record.id}>
-                        <td className="ps-3 text-muted">{index + 1}</td>
-                        <td>{record.course_title || "—"}</td>
-                        <td>{formatRecordType(record.course_record_type)}</td>
-                        <td>
+                        <td data-label="#" className="ps-3 text-muted">
+                          {index + 1}
+                        </td>
+                        <td data-label="Course">{record.course_title || "—"}</td>
+                        <td data-label="Record type">
+                          {formatRecordType(record.course_record_type)}
+                        </td>
+                        <td data-label="Status">
                           <span
                             className={`badge ${
                               record.status === "compliant" ||
@@ -295,8 +405,10 @@ const TrainingRecords = () => {
                             {record.status || "Unknown"}
                           </span>
                         </td>
-                        <td>{formatDate(record.achieved_on)}</td>
-                        <td className="pe-3">
+                        <td data-label="Achieved on">
+                          {formatDate(record.achieved_on)}
+                        </td>
+                        <td data-label="Expires on" className="pe-3">
                           {formatDate(record.expires_on)}
                         </td>
                       </tr>
