@@ -58,11 +58,32 @@ const Users = () => {
   return (
      <>
      <PageTitle title="Users" />
+      <style>{`
+        .management-icon-button {
+          display: inline-flex;
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+        }
+
+        .management-icon-button i {
+          font-size: 18px;
+        }
+      `}</style>
       <div className="container-fluid px-3">
         <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
           <h3 className="mb-2">User Management</h3>
-          <button className="btn btn-danger mb-2" onClick={() => setShowAdd(true)}>
-            Add New User
+          <button
+            type="button"
+            className="management-icon-button btn btn-danger mb-2"
+            onClick={() => setShowAdd(true)}
+            title="Add new user"
+            aria-label="Add new user"
+          >
+            <i className="ph ph-user-plus" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -101,30 +122,39 @@ const Users = () => {
                   <td data-label="Department">{u.department || "-"}</td>
                   <td data-label="Employee Id">{u.employee_id || "-"}</td>
                   <td data-label="Actions">
-                    <div className="btn-group flex-wrap">
+                    <div className="d-flex flex-wrap gap-2">
                       <button
-                        className="btn btn-sm btn-info"
+                        type="button"
+                        className="management-icon-button btn btn-sm btn-info"
                         onClick={() => {
                           setSelectedUser(u);
                           setShowView(true);
                         }}
+                        title={`View ${u.full_name || u.email}`}
+                        aria-label={`View ${u.full_name || u.email}`}
                       >
-                        View
+                        <i className="ph ph-eye" aria-hidden="true"></i>
                       </button>
                       <button
-                        className="btn btn-sm btn-warning"
+                        type="button"
+                        className="management-icon-button btn btn-sm btn-warning"
                         onClick={() => {
                           setSelectedUser(u);
                           setShowEdit(true);
                         }}
+                        title={`Edit ${u.full_name || u.email}`}
+                        aria-label={`Edit ${u.full_name || u.email}`}
                       >
-                        Edit
+                        <i className="ph ph-pencil-simple" aria-hidden="true"></i>
                       </button>
                       <button
-                        className="btn btn-sm btn-danger"
+                        type="button"
+                        className="management-icon-button btn btn-sm btn-danger"
                         onClick={() => handleDelete(u.id)}
+                        title={`Delete ${u.full_name || u.email}`}
+                        aria-label={`Delete ${u.full_name || u.email}`}
                       >
-                        Delete
+                        <i className="ph ph-trash" aria-hidden="true"></i>
                       </button>
                     </div>
                   </td>
