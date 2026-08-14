@@ -52,10 +52,33 @@ const Departments = () => {
   return (
      <>
      <PageTitle title="Departments" />
+      <style>{`
+        .management-icon-button {
+          display: inline-flex;
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+        }
+
+        .management-icon-button i {
+          font-size: 18px;
+        }
+      `}</style>
       <div className="container-fluid px-3">
         <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
           <h3 className="mb-2">Department Management</h3>
-          <button className="btn btn-danger mb-2" onClick={() => setShowAdd(true)}>Add New Department</button>
+          <button
+            type="button"
+            className="management-icon-button btn btn-danger mb-2"
+            onClick={() => setShowAdd(true)}
+            title="Add new department"
+            aria-label="Add new department"
+          >
+            <i className="ph ph-plus-circle" aria-hidden="true"></i>
+          </button>
         </div>
 
         {error && <div className="alert alert-danger" role="alert">{error}</div>}
@@ -83,16 +106,34 @@ const Departments = () => {
                   <td data-label="Name">{department.name}</td>
                   <td data-label="Assigned Users">{department.user_count ?? 0}</td>
                   <td data-label="Actions">
-                    <div className="btn-group flex-wrap">
-                      <button className="btn btn-sm btn-warning" onClick={() => setSelectedDepartment(department)}>Edit</button>
+                    <div className="d-flex flex-wrap gap-2">
                       <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(department)}
-                        disabled={department.user_count > 0}
-                        title={department.user_count > 0 ? "Reassign users before deleting this department" : "Delete department"}
+                        type="button"
+                        className="management-icon-button btn btn-sm btn-warning"
+                        onClick={() => setSelectedDepartment(department)}
+                        title={`Edit ${department.name}`}
+                        aria-label={`Edit ${department.name}`}
                       >
-                        Delete
+                        <i className="ph ph-pencil-simple" aria-hidden="true"></i>
                       </button>
+                      <span
+                        className="d-inline-flex"
+                        title={department.user_count > 0
+                          ? "Reassign users before deleting this department"
+                          : `Delete ${department.name}`}
+                      >
+                        <button
+                          type="button"
+                          className="management-icon-button btn btn-sm btn-danger"
+                          onClick={() => handleDelete(department)}
+                          disabled={department.user_count > 0}
+                          aria-label={department.user_count > 0
+                            ? `Cannot delete ${department.name}; reassign its users first`
+                            : `Delete ${department.name}`}
+                        >
+                          <i className="ph ph-trash" aria-hidden="true"></i>
+                        </button>
+                      </span>
                     </div>
                   </td>
                 </tr>
