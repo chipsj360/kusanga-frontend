@@ -2,11 +2,15 @@ import { useState } from "react";
 import API from "../api";
 import "../assets/css/bootstrap.min.css";
 
+const COURSE_TYPES = ["scorm", "xapi", "video", "pdf"];
+
 const EditCourse = ({ course, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     title: course.title || "",
     description: course.description || "",
-    course_type: course.course_type || "",
+    course_type: COURSE_TYPES.includes(course.course_type)
+      ? course.course_type
+      : "",
     record_type: course.record_type || "compliance",
     duration: course.duration || "",
     created_by: course.created_by || "",
@@ -73,14 +77,19 @@ const EditCourse = ({ course, onClose, onSuccess }) => {
 
               <div className="mb-3">
                 <label className="form-label text-dark">Course Type</label>
-                <input
-                  type="text"
+                <select
                   name="course_type"
-                  className="form-control border-dark rounded"
+                  className="form-select border-dark rounded"
                   value={formData.course_type}
                   onChange={handleChange}
                   required
-                />
+                >
+                  <option value="" disabled>Select a course type</option>
+                  <option value="scorm">SCORM</option>
+                  <option value="xapi">xAPI</option>
+                  <option value="video">Video</option>
+                  <option value="pdf">PDF</option>
+                </select>
               </div>
 
               <div className="mb-3">

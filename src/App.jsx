@@ -17,6 +17,7 @@ import CourseGroups from "./pages/CourseGroups";
 import Enrollment from "./pages/Enrollment";
 import TrainingRecords from "./pages/TrainingRecords";
 import VideoModulePlayer from "./components/VideoModulePlayer";
+import Departments from "./pages/Departments";
 function App() {
   const [count, setCount] = useState(0)
 
@@ -25,7 +26,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/signup" element={<Signup />} /> */}
         
         {/* Dashboard */}
         <Route
@@ -109,6 +110,18 @@ function App() {
               <RoleRoute allowedRoles={["trainer", "admin"]}>
                 <DashboardLayout>
                   <Users />
+                </DashboardLayout>
+              </RoleRoute>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/departments"
+          element={
+            <PrivateRoute>
+              <RoleRoute allowedRoles={["trainer", "admin"]}>
+                <DashboardLayout>
+                  <Departments />
                 </DashboardLayout>
               </RoleRoute>
             </PrivateRoute>

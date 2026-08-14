@@ -116,6 +116,16 @@ const role = localStorage.getItem("role");
                     )}
                     {(role === "trainer" || role === "admin") && (
                     <li className="sidebar-menu__item">
+                    <Link to="/departments" className="sidebar-menu__link">
+                        <span className="icon">
+                        <i className="ph ph-buildings" />
+                        </span>
+                        <span className="text">Departments</span>
+                    </Link>
+                    </li>
+                    )}
+                    {(role === "trainer" || role === "admin") && (
+                    <li className="sidebar-menu__item">
                     <Link to="/modules" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-clipboard-text" />
@@ -154,24 +164,24 @@ const role = localStorage.getItem("role");
                             </Link>
                         </li>
                         )}
-                       { role === "admin" && (
-                    <li className="sidebar-menu__item">
+                       
+                    {/* <li className="sidebar-menu__item">
                     <a href="analytics.html" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-chart-bar" />
                         </span>
                         <span className="text">Analytics</span>
                     </a>
-                    </li>
-                    )}
-                    <li className="sidebar-menu__item">
+                    </li> */}
+                    
+                    {/* <li className="sidebar-menu__item">
                     <a href="event.html" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-calendar-dots" />
                         </span>
                         <span className="text">Events</span>
                     </a>
-                    </li>
+                    </li> */}
 
 
                     <li className="sidebar-menu__item">
@@ -190,7 +200,7 @@ const role = localStorage.getItem("role");
                    
                 </ul>
                 </div>
-                <div className="p-20 pt-80">
+                {/* <div className="p-20 pt-80">
                 <div className="bg-main-50 p-20 pt-0 rounded-16 text-center mt-74">
                     <span className="border border-5 bg-white mx-auto border-primary-50 w-114 h-114 rounded-circle flex-center text-success-600 text-2xl translate-n74">
                     <img
@@ -210,7 +220,7 @@ const role = localStorage.getItem("role");
                     </a>
                     </div>
                 </div>
-                </div>
+                </div> */}
             </div>
             </aside>
 

@@ -27,14 +27,6 @@ const ModuleViewer = ({ module }) => {
           />
         );
 
-      case "text":
-        return (
-          <div
-            className="bg-light p-3 rounded border text-dark"
-            dangerouslySetInnerHTML={{ __html: module.text_content }}
-          ></div>
-        );
-
       case "scorm":
         return (
           <iframe
