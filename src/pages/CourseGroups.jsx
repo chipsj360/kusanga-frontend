@@ -2,6 +2,24 @@ import { useEffect, useState } from "react";
 import PageTitle from "../components/PageTitle";
 import API from "../api";
 
+const UserMinusIcon = () => (
+  <svg
+    aria-hidden="true"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M16 11h6" />
+  </svg>
+);
+
 const CourseGroups = () => {
   const role = localStorage.getItem("role");
   const canManage = role === "trainer" || role === "admin";
@@ -26,6 +44,8 @@ const CourseGroups = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [deletingGroup, setDeletingGroup] = useState(false);
+  const [unassigningUserId, setUnassigningUserId] = useState(null);
 
   if (!canManage) {
     return <div className="container mt-4">Access denied.</div>;
@@ -110,6 +130,33 @@ const CourseGroups = () => {
     }
   };
 
+  const deleteGroup = async () => {
+    if (!selectedGroup || deletingGroup) return;
+
+    const groupId = selectedGroup.id;
+    const groupName = selectedGroup.name;
+    if (!window.confirm(`Delete the course group “${groupName}”? This cannot be undone.`)) return;
+
+    setError("");
+    setSuccess("");
+    setDeletingGroup(true);
+
+    try {
+      await API.delete(`/api/course-groups/${groupId}/`);
+      setGroups((prev) => prev.filter((group) => group.id !== groupId));
+      setSelectedGroup(null);
+      setGroupCourseIds([]);
+      setSelectedStudentIds([]);
+      setDueDate("");
+      setSuccess(`Course group “${groupName}” deleted.`);
+    } catch (err) {
+      console.error(err?.response?.data || err);
+      setError(err?.response?.data?.detail || "Failed to delete course group.");
+    } finally {
+      setDeletingGroup(false);
+    }
+  };
+
   const toggleStudent = (userId) => {
     setSelectedStudentIds((prev) =>
       prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
@@ -143,11 +190,12 @@ const CourseGroups = () => {
   };
 
   const unassignGroupFromStudent = async (userId, removeEnrollments = false) => {
-    if (!selectedGroup) return;
+    if (!selectedGroup || unassigningUserId !== null) return;
     if (!window.confirm("Unassign this group from the student?")) return;
 
     setError("");
     setSuccess("");
+    setUnassigningUserId(userId);
 
     try {
       const res = await API.post(`/api/course-groups/${selectedGroup.id}/unassign/`, {
@@ -158,6 +206,8 @@ const CourseGroups = () => {
     } catch (err) {
       console.error(err?.response?.data || err);
       setError(err?.response?.data?.detail || "Failed to unassign.");
+    } finally {
+      setUnassigningUserId(null);
     }
   };
 
@@ -263,9 +313,19 @@ const CourseGroups = () => {
                 <div className="card mb-3">
                   <div className="card-header d-flex justify-content-between align-items-center">
                     <div className="fw-bold">Group Courses — {selectedGroup.name}</div>
-                    <button className="btn btn-success btn-sm" onClick={saveGroupCourses}>
-                      Save Courses
-                    </button>
+                    <div className="d-flex gap-2">
+                      <button className="btn btn-success btn-sm" onClick={saveGroupCourses}>
+                        Save Courses
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-sm"
+                        onClick={deleteGroup}
+                        disabled={deletingGroup}
+                      >
+                        {deletingGroup ? "Deleting…" : "Delete Group"}
+                      </button>
+                    </div>
                   </div>
                   <div className="card-body" style={{ maxHeight: 300, overflowY: "auto" }}>
                     {filteredCourses.map((c) => (
@@ -360,10 +420,21 @@ const CourseGroups = () => {
                           </div>
                           <div>
                             <button
-                              className="btn btn-outline-danger btn-sm"
+                              type="button"
+                              className="btn btn-danger btn-sm"
                               onClick={() => unassignGroupFromStudent(s.id, false)}
+                              disabled={unassigningUserId !== null}
+                              aria-label={`Unassign ${s.full_name || s.username} from ${selectedGroup.name}`}
+                              title={`Unassign ${s.full_name || s.username}`}
                             >
-                              Unassign
+                              {unassigningUserId === s.id ? (
+                                <span
+                                  className="spinner-border spinner-border-sm"
+                                  aria-hidden="true"
+                                />
+                              ) : (
+                                <UserMinusIcon />
+                              )}
                             </button>
                           </div>
                         </div>

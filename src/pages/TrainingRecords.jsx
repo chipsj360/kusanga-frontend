@@ -296,7 +296,7 @@ const TrainingRecords = () => {
           <div className="col-12 col-md-2 d-grid">
             <button
               type="button"
-              className="btn btn-outline-secondary"
+              className="btn btn-secondary"
               onClick={clearFilters}
             >
               Clear Filters
