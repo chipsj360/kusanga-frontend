@@ -45,7 +45,7 @@ const Courses = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this Course?")) return;
     try {
-      await API.delete(`/api/Courses/${id}/`);
+      await API.delete(`/api/courses/${id}/`);
       setCourses(courses.filter((u) => u.id !== id));
       setShowView(false);
     } catch (err) {
