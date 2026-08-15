@@ -157,13 +157,20 @@ const handleEnroll = async (e) => {
   const handleEditModule = async (e) => {
     e.preventDefault();
     try {
-      await API.put(`/api/modules/${selectedModule.id}/`, selectedModule);
+      // Send only editable scalar fields. The full module object contains file
+      // URLs, which Django rejects when a FileField expects an uploaded file.
+      await API.patch(`/api/modules/${selectedModule.id}/`, {
+        title: selectedModule.title,
+        description: selectedModule.description || "",
+        order: Number(selectedModule.order) || 1,
+      });
       fetchModules();
       setShowEditModule(false);
       setSelectedModule(null);
       alert("Module updated successfully!");
     } catch (err) {
-      console.error("Error updating module:", err);
+      console.error("Module update failed:", err.response?.data || err);
+      alert("Error updating module. Check the console for validation details.");
     }
   };
 
