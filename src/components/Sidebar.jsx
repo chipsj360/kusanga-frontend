@@ -113,6 +113,14 @@ const role = localStorage.getItem("role");
                         
                     </li> */}
                     <li className="sidebar-menu__item">
+                        <Link to="/" className="sidebar-menu__link" onClick={onClose}>
+                            <span className="icon">
+                            <i className="ph ph-house" />
+                            </span>
+                            <span className="text">Dashboard</span>
+                        </Link>
+                    </li>
+                    <li className="sidebar-menu__item">
                         <Link to="/courses" className="sidebar-menu__link" onClick={onClose}>
                             <span className="icon">
                             <i className="ph ph-users-three" />
