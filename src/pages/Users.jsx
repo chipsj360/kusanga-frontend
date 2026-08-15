@@ -9,6 +9,7 @@ import "../assets/css/user.css";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [showView, setShowView] = useState(false);
@@ -18,6 +19,7 @@ const Users = () => {
   // Fetch users from backend
   useEffect(() => {
     fetchUsers();
+    fetchDepartments();
   }, []);
 
   const fetchUsers = async () => {
@@ -27,6 +29,27 @@ const Users = () => {
     } catch (err) {
       console.error("Error fetching users:", err);
     }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await API.get("/api/auth/departments/");
+      setDepartments(res.data);
+    } catch (err) {
+      console.error("Error fetching departments:", err.response?.data || err);
+    }
+  };
+
+  const departmentNameById = new Map(
+    departments.map((department) => [String(department.id), department.name]),
+  );
+
+  const getDepartmentName = (user) => {
+    if (user.department && typeof user.department === "object") {
+      return user.department.name || "-";
+    }
+
+    return departmentNameById.get(String(user.department)) || "-";
   };
 
   const handleDelete = async (id) => {
@@ -46,7 +69,7 @@ const Users = () => {
       user.email,
       user.role,
       user.job_title,
-      user.department,
+      getDepartmentName(user),
       user.employee_id,
     ];
 
@@ -119,7 +142,7 @@ const Users = () => {
                   <td data-label="Email">{u.email}</td>
                   <td data-label="Role">{u.role}</td>
                   <td data-label="Job Title">{u.job_title || "-"}</td>
-                  <td data-label="Department">{u.department || "-"}</td>
+                  <td data-label="Department">{getDepartmentName(u)}</td>
                   <td data-label="Employee Id">{u.employee_id || "-"}</td>
                   <td data-label="Actions">
                     <div className="d-flex flex-wrap gap-2">
