@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import API from '../api';
 import UserImg from "../assets/images/avatars/male-avatar.png";
 
-const Navbar=()=>{
+const Navbar=({ isSidebarOpen = false, onToggleSidebar = () => {} })=>{
 const navigate = useNavigate();
 const [user, setUser] = useState(null);
 
@@ -37,20 +37,26 @@ const [user, setUser] = useState(null);
     user?.username ||
     "User";
 
-  const logout = async () => {
-    try {
-      const refresh = localStorage.getItem("refresh");
+  const logout = () => {
+    const refresh = localStorage.getItem("refresh");
 
-      if (refresh) {
-        await API.post("/api/auth/logout/", { refresh });
-      }
-    } catch (error) {
-      console.error("Logout error:", error.response?.data);
-    } finally {
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      navigate("/login");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("role");
+    setUser(null);
+    window.dispatchEvent(new Event("auth-change"));
+    navigate("/login", { replace: true });
+
+    if (refresh) {
+      API.post("/api/auth/logout/", { refresh }).catch((error) => {
+        console.error("Logout error:", error.response?.data || error);
+      });
     }
+
+    // Fallback for applications whose route guard keeps stale auth state.
+    window.setTimeout(() => {
+      window.location.replace("/login");
+    }, 250);
   };
 
     return(
@@ -64,6 +70,9 @@ const [user, setUser] = useState(null);
         <button
           type="button"
           className="toggle-btn d-xl-none d-flex text-26 text-gray-500"
+          onClick={onToggleSidebar}
+          aria-label={isSidebarOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={isSidebarOpen}
         >
           <i className="ph ph-list" />
         </button>
@@ -280,13 +289,14 @@ const [user, setUser] = useState(null);
                             </a>
                         </li> */}
                         <li className="pt-8 border-top border-gray-100">
-                        <div
-                            className="py-12 px-20 text-danger-600 flex-align gap-8 cursor-pointer"
+                        <button
+                            type="button"
+                            className="py-12 px-20 text-danger-600 flex-align gap-8 cursor-pointer bg-transparent border-0 w-100 text-start"
                             onClick={logout}
                         >
                             <i className="ph ph-sign-out" />
                             <span>Log Out</span>
-                        </div>
+                        </button>
                         </li>
                         </ul>
                     </div>

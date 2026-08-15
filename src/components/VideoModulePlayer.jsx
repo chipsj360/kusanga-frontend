@@ -26,9 +26,19 @@ const VideoModulePlayer = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
     const fetchModule = async () => {
+      lastAllowedTimeRef.current = 0;
+      durationRef.current = 0;
+      hasCompletedRef.current = false;
+      ignoreNextSeekRef.current = false;
+      setBlockedSeek(false);
+      setCurrentTime(0);
+      setDuration(0);
+
       try {
         const res = await API.get(`/api/modules/${moduleId}/`);
         setModule(res.data);
@@ -151,6 +161,39 @@ const VideoModulePlayer = () => {
     }
   };
 
+  const rewindTenSeconds = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = Math.max(0, video.currentTime - 10);
+    setCurrentTime(video.currentTime);
+  };
+
+  const handleVolumeChange = (event) => {
+    const nextVolume = Number(event.target.value);
+    const video = videoRef.current;
+    setVolume(nextVolume);
+    setIsMuted(nextVolume === 0);
+
+    if (video) {
+      video.volume = nextVolume;
+      video.muted = nextVolume === 0;
+    }
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const nextMuted = !video.muted;
+    video.muted = nextMuted;
+    if (!nextMuted && video.volume === 0) {
+      video.volume = 1;
+      setVolume(1);
+    }
+    setIsMuted(nextMuted);
+  };
+
   if (loading) return <div className="p-4">Loading video...</div>;
   if (!module) return <div className="p-4">Module not found.</div>;
 
@@ -197,12 +240,37 @@ const VideoModulePlayer = () => {
           />
 
           <div className="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
-            <div className="d-flex gap-2">
-              <button className="btn btn-primary" onClick={togglePlayPause}>
+            <div className="d-flex flex-wrap align-items-center gap-2">
+              <button type="button" className="btn btn-primary" onClick={togglePlayPause}>
                 {isPlaying ? "Pause" : "Play"}
               </button>
 
-              <button className="btn btn-outline-light" onClick={toggleFullscreen}>
+              <button
+                type="button"
+                className="btn btn-outline-light"
+                onClick={rewindTenSeconds}
+              >
+                Back 10 seconds
+              </button>
+
+              <button type="button" className="btn btn-outline-light" onClick={toggleMute}>
+                {isMuted ? "Unmute" : "Mute"}
+              </button>
+
+              <label className="d-flex align-items-center gap-2 mb-0">
+                <span>Volume</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={isMuted ? 0 : volume}
+                  onChange={handleVolumeChange}
+                  aria-label="Video volume"
+                />
+              </label>
+
+              <button type="button" className="btn btn-outline-light" onClick={toggleFullscreen}>
                 {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
               </button>
             </div>
@@ -226,7 +294,7 @@ const VideoModulePlayer = () => {
               />
             </div>
             <small className="text-light">
-              Progress is shown for reference only. Seeking forward is disabled.
+              You can go back to replay watched content. Seeking forward is disabled.
             </small>
           </div>
         </div>
