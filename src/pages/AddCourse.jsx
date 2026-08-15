@@ -10,8 +10,7 @@ const AddCourse = ({ onClose, onSuccess }) => {
     course_type: "",
     record_type: "compliance",
     duration: "",
-    created_by: "",
-    created_at: "",
+    expiry_months: "",
   });
 
   const [courseTypes, setCourseTypes] = useState([]);
@@ -87,6 +86,20 @@ const AddCourse = ({ onClose, onSuccess }) => {
                     className="form-control"
                     value={form.duration}
                     onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label>Expiry Time Frame (Months)</label>
+                  <input
+                    type="number"
+                    name="expiry_months"
+                    className="form-control"
+                    value={form.expiry_months}
+                    onChange={handleChange}
+                    min="1"
+                    step="1"
+                    required
                   />
                 </div>
 
