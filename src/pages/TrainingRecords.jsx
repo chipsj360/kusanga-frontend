@@ -104,6 +104,19 @@ const TrainingRecords = () => {
 
   const formatDate = (date) => (date ? new Date(date).toLocaleString() : "—");
 
+  const isExpired = (record) =>
+    record.expires_on && new Date(record.expires_on).getTime() <= Date.now();
+
+  const formatStatus = (status) => {
+    const labels = {
+      compliant: "Compliant",
+      non_compliant: "Not Compliant",
+      competent: "Competent",
+      not_competent: "Not Competent",
+    };
+    return labels[status] || status || "Unknown";
+  };
+
   return (
      <>
     <PageTitle title="Training Records" />
@@ -384,8 +397,11 @@ const TrainingRecords = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {group.records.map((record, index) => (
-                      <tr key={record.id}>
+                    {group.records.map((record, index) => {
+                      const expired = isExpired(record);
+
+                      return (
+                      <tr key={record.id} className={expired ? "table-danger" : ""}>
                         <td data-label="#" className="ps-3 text-muted">
                           {index + 1}
                         </td>
@@ -396,23 +412,31 @@ const TrainingRecords = () => {
                         <td data-label="Status">
                           <span
                             className={`badge ${
-                              record.status === "compliant" ||
-                              record.status === "competent"
+                              expired ||
+                              record.status === "non_compliant" ||
+                              record.status === "not_competent"
+                                ? "bg-danger"
+                                : record.status === "compliant" ||
+                                    record.status === "competent"
                                 ? "bg-success"
                                 : "bg-secondary"
                             }`}
                           >
-                            {record.status || "Unknown"}
+                            {formatStatus(record.status)}
                           </span>
                         </td>
                         <td data-label="Achieved on">
                           {formatDate(record.achieved_on)}
                         </td>
-                        <td data-label="Expires on" className="pe-3">
+                        <td
+                          data-label="Expires on"
+                          className={`pe-3 ${expired ? "text-danger fw-bold" : ""}`}
+                        >
                           {formatDate(record.expires_on)}
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

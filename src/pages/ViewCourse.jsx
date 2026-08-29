@@ -4,6 +4,10 @@ import API from "../api";
 import AddModule from "./AddModule";
 import ViewModule from "./ViewModule";
 import "../assets/css/viewCourse.css";
+
+const getUserDisplayName = (user) =>
+  user?.full_name?.trim() || user?.username || "Unknown user";
+
 const ViewCourse = ({ course, onClose, onDelete, onEdit }) => {
 const role = localStorage.getItem("role");
 const canManage = role === "trainer" || role === "admin";
@@ -19,6 +23,9 @@ const canManage = role === "trainer" || role === "admin";
   const [enrolling, setEnrolling] = useState(false);
   const [enrollError, setEnrollError] = useState("");
   const [enrollSuccess, setEnrollSuccess] = useState("");
+  const [creatorName, setCreatorName] = useState(
+    course.created_by_name || course.created_by_username || "Loading...",
+  );
 
 
 
@@ -86,6 +93,44 @@ const handleEnroll = async (e) => {
 
   }, [course]);
 
+  useEffect(() => {
+    let active = true;
+
+    const fetchCreator = async () => {
+      if (course.created_by_name || course.created_by_username) {
+        setCreatorName(course.created_by_name || course.created_by_username);
+        return;
+      }
+
+      try {
+        const endpoint = course.created_by
+          ? `/api/users/${course.created_by}/`
+          : "/api/auth/user/";
+        const response = await API.get(endpoint);
+        if (active) setCreatorName(getUserDisplayName(response.data));
+      } catch (error) {
+        console.error("Error fetching course creator:", error);
+
+        try {
+          const response = await API.get("/api/auth/user/");
+          if (active && (!course.created_by || response.data.id === course.created_by)) {
+            setCreatorName(getUserDisplayName(response.data));
+          } else if (active) {
+            setCreatorName("Unknown user");
+          }
+        } catch (currentUserError) {
+          console.error("Error fetching current user:", currentUserError);
+          if (active) setCreatorName("Unknown user");
+        }
+      }
+    };
+
+    fetchCreator();
+    return () => {
+      active = false;
+    };
+  }, [course.created_by, course.created_by_name, course.created_by_username]);
+
 
 
 
@@ -112,13 +157,20 @@ const handleEnroll = async (e) => {
   const handleEditModule = async (e) => {
     e.preventDefault();
     try {
-      await API.put(`/api/modules/${selectedModule.id}/`, selectedModule);
+      // Send only editable scalar fields. The full module object contains file
+      // URLs, which Django rejects when a FileField expects an uploaded file.
+      await API.patch(`/api/modules/${selectedModule.id}/`, {
+        title: selectedModule.title,
+        description: selectedModule.description || "",
+        order: Number(selectedModule.order) || 1,
+      });
       fetchModules();
       setShowEditModule(false);
       setSelectedModule(null);
       alert("Module updated successfully!");
     } catch (err) {
-      console.error("Error updating module:", err);
+      console.error("Module update failed:", err.response?.data || err);
+      alert("Error updating module. Check the console for validation details.");
     }
   };
 
@@ -281,7 +333,11 @@ const handleEnroll = async (e) => {
               <div className="mb-3"><strong>Description:</strong> {course.description}</div>
               <div className="mb-2"><strong>Type:</strong> {course.course_type}</div>
               <div className="mb-2"><strong>Duration:</strong> {course.duration || "-"}</div>
-              <div className="mb-2"><strong>Created By:</strong> {course.created_by || "-"}</div>
+              <div className="mb-2">
+                <strong>Expiry Time Frame:</strong>{" "}
+                {course.expiry_months ? `${course.expiry_months} months` : "-"}
+              </div>
+              <div className="mb-2"><strong>Created By:</strong> {creatorName}</div>
 
               <hr />
 

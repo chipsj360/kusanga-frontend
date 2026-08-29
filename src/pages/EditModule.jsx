@@ -52,16 +52,17 @@ const EditModule = ({ module, onClose, onSuccess }) => {
         data.append("scorm_package", form.scorm_package);
       }
 
-      await API.put(`/api/modules/${module.id}/`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      // PATCH updates only the submitted fields. Existing file fields are left
+      // untouched unless the user selects a replacement file above.
+      await API.patch(`/api/modules/${module.id}/`, data);
 
       alert("Module updated successfully!");
       onSuccess();
       onClose();
     } catch (err) {
-      console.error(err);
-      alert("Error updating module");
+      const details = err.response?.data || err;
+      console.error("Module update failed:", details);
+      alert("Error updating module. Check the console for validation details.");
     } finally {
       setSaving(false);
     }
