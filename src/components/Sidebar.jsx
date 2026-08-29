@@ -9,26 +9,43 @@ import '../assets/css/calendar.css'
 import '../assets/css/jquery-jvectormap-2.0.5.css'
 import '../assets/css/main.css'
 import { Link } from "react-router-dom";
-const SideBar=()=>{
+import Elearning from "../assets/images/logo/Elearning.jpg";
+const SideBar=({ isOpen = false, onClose = () => {} })=>{
 const role = localStorage.getItem("role");
     return(
         <>
-        <div className="side-overlay" />
-        <aside className="sidebar">
+        <div
+            className={`side-overlay ${isOpen ? "show active" : ""}`}
+            style={isOpen ? { visibility: "visible", opacity: 1 } : undefined}
+            onClick={onClose}
+            role="button"
+            tabIndex={isOpen ? 0 : -1}
+            aria-label="Close navigation menu"
+            onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") onClose();
+            }}
+        />
+        <aside
+            className={`sidebar ${isOpen ? "active" : ""}`}
+            style={isOpen ? { insetInlineStart: 0, transform: "translateX(0)" } : undefined}
+        >
             {/* sidebar close btn */}
             <button
                 type="button"
                 className="sidebar-close-btn text-gray-500 hover-text-white hover-bg-main-600 text-md w-24 h-24 border border-gray-100 hover-border-main-600 d-xl-none d-flex flex-center rounded-circle position-absolute"
+                onClick={onClose}
+                aria-label="Close navigation menu"
             >
                 <i className="ph ph-x" />
             </button>
             {/* sidebar close btn */}
-            <a
-                href="index.html"
+            <Link
+                to="/courses"
                 className="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-10"
+                onClick={onClose}
             >
-                <img src="../assets/images/logo/Elearning.jpg" alt="Logo" />
-            </a>
+                <img src={Elearning} alt="Logo" />
+            </Link>
             <div className="sidebar-menu-wrapper overflow-y-auto scroll-sm">
                 <div className="p-20 pt-10">
                 <ul className="sidebar-menu">
@@ -96,7 +113,15 @@ const role = localStorage.getItem("role");
                         
                     </li> */}
                     <li className="sidebar-menu__item">
-                        <Link to="/courses" className="sidebar-menu__link">
+                        <Link to="/" className="sidebar-menu__link" onClick={onClose}>
+                            <span className="icon">
+                            <i className="ph ph-house" />
+                            </span>
+                            <span className="text">Dashboard</span>
+                        </Link>
+                    </li>
+                    <li className="sidebar-menu__item">
+                        <Link to="/courses" className="sidebar-menu__link" onClick={onClose}>
                             <span className="icon">
                             <i className="ph ph-users-three" />
                             </span>
@@ -105,7 +130,7 @@ const role = localStorage.getItem("role");
                     </li>
                     {(role === "trainer" || role === "admin") && (
                     <li className="sidebar-menu__item">
-                    <Link to="/users" className="sidebar-menu__link">
+                    <Link to="/users" className="sidebar-menu__link" onClick={onClose}>
                         <span className="icon">
                         <i className="ph ph-users-three" />
                         </span>
@@ -115,7 +140,17 @@ const role = localStorage.getItem("role");
                     )}
                     {(role === "trainer" || role === "admin") && (
                     <li className="sidebar-menu__item">
-                    <Link to="/modules" className="sidebar-menu__link">
+                    <Link to="/departments" className="sidebar-menu__link" onClick={onClose}>
+                        <span className="icon">
+                        <i className="ph ph-buildings" />
+                        </span>
+                        <span className="text">Departments</span>
+                    </Link>
+                    </li>
+                    )}
+                    {(role === "trainer" || role === "admin") && (
+                    <li className="sidebar-menu__item">
+                    <Link to="/modules" className="sidebar-menu__link" onClick={onClose}>
                         <span className="icon">
                         <i className="ph ph-clipboard-text" />
                         </span>
@@ -125,7 +160,7 @@ const role = localStorage.getItem("role");
                        )}
                        {(role === "trainer" || role === "admin") && (
                         <li className="sidebar-menu__item">
-                            <Link to="/course-groups" className="sidebar-menu__link">
+                            <Link to="/course-groups" className="sidebar-menu__link" onClick={onClose}>
                             <span className="icon">
                                 <i className="ph ph-folder" />
                             </span>
@@ -133,25 +168,44 @@ const role = localStorage.getItem("role");
                             </Link>
                         </li>
                         )}
-
-                       { role === "admin" && (
-                    <li className="sidebar-menu__item">
+                    {(role === "trainer" || role === "admin") && (
+                        <li className="sidebar-menu__item">
+                            <Link to="/enrollments" className="sidebar-menu__link" onClick={onClose}>
+                            <span className="icon">
+                                <i className="ph ph-folder" />
+                            </span>
+                            <span className="text">Enrollments</span>
+                            </Link>
+                        </li>
+                        )}
+                        {(role === "trainer" || role === "admin" || role === "student") && (
+                        <li className="sidebar-menu__item">
+                            <Link to="/training-records" className="sidebar-menu__link" onClick={onClose}>
+                            <span className="icon">
+                                <i className="ph ph-certificate" />
+                            </span>
+                            <span className="text">Training Records</span>
+                            </Link>
+                        </li>
+                        )}
+                       
+                    {/* <li className="sidebar-menu__item">
                     <a href="analytics.html" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-chart-bar" />
                         </span>
                         <span className="text">Analytics</span>
                     </a>
-                    </li>
-                    )}
-                    <li className="sidebar-menu__item">
+                    </li> */}
+                    
+                    {/* <li className="sidebar-menu__item">
                     <a href="event.html" className="sidebar-menu__link">
                         <span className="icon">
                         <i className="ph ph-calendar-dots" />
                         </span>
                         <span className="text">Events</span>
                     </a>
-                    </li>
+                    </li> */}
 
 
                     <li className="sidebar-menu__item">
@@ -170,7 +224,7 @@ const role = localStorage.getItem("role");
                    
                 </ul>
                 </div>
-                <div className="p-20 pt-80">
+                {/* <div className="p-20 pt-80">
                 <div className="bg-main-50 p-20 pt-0 rounded-16 text-center mt-74">
                     <span className="border border-5 bg-white mx-auto border-primary-50 w-114 h-114 rounded-circle flex-center text-success-600 text-2xl translate-n74">
                     <img
@@ -190,7 +244,7 @@ const role = localStorage.getItem("role");
                     </a>
                     </div>
                 </div>
-                </div>
+                </div> */}
             </div>
             </aside>
 

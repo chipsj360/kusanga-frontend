@@ -12,7 +12,6 @@ const AddModule = ({ onClose, onSuccess, selectedCourse }) => {
     content_type: "video",
     file: null,
     video_url: "",
-    text_content: "",
     scorm_package: null,
   });
 
@@ -48,9 +47,6 @@ const AddModule = ({ onClose, onSuccess, selectedCourse }) => {
         data.append("video_url", form.video_url);
       if (form.content_type === "scorm" && form.scorm_package)
         data.append("scorm_package", form.scorm_package);
-      if (form.content_type === "text")
-        data.append("text_content", form.text_content);
-
       await API.post("/api/modules/", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -139,7 +135,6 @@ const AddModule = ({ onClose, onSuccess, selectedCourse }) => {
                     <option value="video">Video</option>
                     <option value="pdf">PDF</option>
                     <option value="scorm">SCORM</option>
-                    <option value="text">Text</option>
                   </select>
                 </div>
               </div>
@@ -198,19 +193,6 @@ const AddModule = ({ onClose, onSuccess, selectedCourse }) => {
                 </div>
               )}
 
-              {form.content_type === "text" && (
-                <div className="mb-3">
-                  <label>Enter Text or HTML Content</label>
-                  <textarea
-                    name="text_content"
-                    className="form-control text-dark bg-white"
-                    rows="6"
-                    value={form.text_content}
-                    onChange={handleChange}
-                    required
-                  ></textarea>
-                </div>
-              )}
             </div>
 
             <div className="modal-footer">

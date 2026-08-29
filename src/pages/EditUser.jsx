@@ -1,8 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import API from "../api";
 
 const EditUser = ({ user, onClose, onSuccess }) => {
-  const [form, setForm] = useState({ ...user });
+  const [form, setForm] = useState({
+    ...user,
+    department: user.department?.id ?? user.department ?? "",
+  });
+  const [departments, setDepartments] = useState([]);
+  const [departmentsLoading, setDepartmentsLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    const fetchDepartments = async () => {
+      try {
+        const response = await API.get("/api/auth/departments/");
+        if (active) setDepartments(response.data);
+      } catch (err) {
+        console.error("Error fetching departments:", err.response?.data || err);
+      } finally {
+        if (active) setDepartmentsLoading(false);
+      }
+    };
+
+    fetchDepartments();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,7 +67,7 @@ const EditUser = ({ user, onClose, onSuccess }) => {
                 <div className="col-md-6 mb-3">
                   <label>Role</label>
                   <select name="role" value={form.role} className="form-select" onChange={handleChange}>
-                    <option value="employee">Employee</option>
+                    <option value="student">Student</option>
                     <option value="trainer">Trainer</option>
                     <option value="admin">Admin</option>
                   </select>
@@ -50,6 +75,27 @@ const EditUser = ({ user, onClose, onSuccess }) => {
                 <div className="col-md-6 mb-3">
                   <label>Job Title</label>
                   <input type="text" name="job_title" value={form.job_title || ""} className="form-control" onChange={handleChange} />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label>Department</label>
+                  <select
+                    name="department"
+                    value={form.department || ""}
+                    className="form-select"
+                    onChange={handleChange}
+                    disabled={departmentsLoading}
+                  >
+                    <option value="">
+                      {departmentsLoading
+                        ? "Loading departments..."
+                        : "Select Department"}
+                    </option>
+                    {departments.map((department) => (
+                      <option key={department.id} value={department.id}>
+                        {department.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label>Employee ID</label>
