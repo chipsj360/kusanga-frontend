@@ -1,4 +1,4 @@
-import "../assets/css/Signup.css";
+import "../assets/css/signup.css";
 import "../assets/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import API from "../api";
