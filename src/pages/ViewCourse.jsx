@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import API from "../api";
 import AddModule from "./AddModule";
 import ViewModule from "./ViewModule";
-import "../assets/css/viewCourse.css";
+import "../assets/css/viewcourse.css";
 
 const getUserDisplayName = (user) =>
   user?.full_name?.trim() || user?.username || "Unknown user";
