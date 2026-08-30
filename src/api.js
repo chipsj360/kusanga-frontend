@@ -1,59 +1,94 @@
-// src/api.js
 import axios from "axios";
 
+// Remove trailing slashes to prevent malformed or duplicate URLs.
+// Production "/" becomes an empty origin, which makes requests same-origin.
+// Development can use http://127.0.0.1:8000.
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL || ""
+).replace(/\/+$/, "");
+
 const API = axios.create({
-  baseURL: "http://127.0.0.1:8000", // Django backend
+  baseURL: API_BASE_URL || undefined,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Request interceptor to attach token
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Attach the access token to authenticated requests.
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("access");
 
-// Response interceptor to handle 401 and refresh token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Refresh an expired access token once.
 API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const requestUrl = originalRequest?.url || "";
+
+    const isLoginRequest = requestUrl.includes("/api/auth/login/");
+    const isRefreshRequest = requestUrl.includes("/api/auth/refresh/");
 
     if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !isLoginRequest &&
+      !isRefreshRequest
     ) {
       originalRequest._retry = true;
 
-      try {
-        const refresh = localStorage.getItem("refresh");
-        if (!refresh) {
-          // No refresh token → logout
-          localStorage.removeItem("access");
-          localStorage.removeItem("refresh");
-          window.location.href = "/login";
-          return Promise.reject(error);
-        }
+      const refresh = localStorage.getItem("refresh");
 
-        const res = await axios.post("http://127.0.0.1:8000/api/auth/refresh/", {
+      if (!refresh) {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        window.location.replace("/login");
+
+        return Promise.reject(error);
+      }
+
+      try {
+        const refreshUrl = `${API_BASE_URL}/api/auth/refresh/`;
+
+        const response = await axios.post(refreshUrl, {
           refresh,
         });
 
-        localStorage.setItem("access", res.data.access);
-        originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
+        const newAccessToken = response.data.access;
 
-        return API(originalRequest); // retry original request
+        localStorage.setItem("access", newAccessToken);
+
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return API(originalRequest);
       } catch (refreshError) {
-        console.error("Refresh token expired", refreshError);
+        console.error(
+          "Refresh token failed:",
+          refreshError.response?.data || refreshError.message
+        );
+
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
-        window.location.href = "/login";
+
+        window.location.replace("/login");
+
+        return Promise.reject(refreshError);
       }
     }
 
     return Promise.reject(error);
   }
 );
+
 export default API;
