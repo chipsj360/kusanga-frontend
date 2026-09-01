@@ -118,7 +118,7 @@ const ScormLauncher = ({ moduleId, onProgressUpdate }) => {
         </button>
       </div>
       <iframe
-        src={`${API.defaults.baseURL}/api/scorm/launch/${moduleId}/`}
+        src={`/api/scorm/launch/${moduleId}/`}
         title="SCORM Player"
         style={{
           width: "100%",
