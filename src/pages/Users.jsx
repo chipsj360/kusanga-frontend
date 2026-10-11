@@ -66,6 +66,7 @@ const Users = () => {
   const filteredUsers = users.filter((user) => {
     const values = [
       user.full_name,
+      user.username,
       user.email,
       user.role,
       user.job_title,
@@ -126,6 +127,7 @@ const Users = () => {
               <tr>
                 <th>ID</th>
                 <th>Full Name</th>
+                <th>User Name</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Job Title</th>
@@ -139,6 +141,7 @@ const Users = () => {
                 <tr key={u.id}>
                   <td data-label="ID">{u.id}</td>
                   <td data-label="Name">{u.full_name}</td>
+                  <td data-label="User Name">{u.username}</td>
                   <td data-label="Email">{u.email}</td>
                   <td data-label="Role">{u.role}</td>
                   <td data-label="Job Title">{u.job_title || "-"}</td>
@@ -185,7 +188,7 @@ const Users = () => {
               ))}
               {!filteredUsers.length && (
                 <tr>
-                  <td colSpan="8" className="text-center text-muted py-3">
+                  <td colSpan="9" className="text-center text-muted py-3">
                     {users.length ? "No users match your search." : "No users found."}
                   </td>
                 </tr>
