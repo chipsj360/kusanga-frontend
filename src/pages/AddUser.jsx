@@ -14,6 +14,7 @@ const AddUser = ({ onClose, onSuccess }) => {
     employee_id: "",
     department: null,
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [isLoadingDepartments, setIsLoadingDepartments] = useState(true);
   const [departmentError, setDepartmentError] = useState("");
@@ -115,8 +116,17 @@ const AddUser = ({ onClose, onSuccess }) => {
                   <input type="email" name="email" className="form-control" onChange={handleChange} required />
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label>Password</label>
-                  <input type="password" name="password" className="form-control" onChange={handleChange} required />
+                  <label htmlFor="add-user-password">Password</label>
+                  <div className="input-group">
+                    <input id="add-user-password" type={showPassword ? "text" : "password"} name="password" value={form.password} className="form-control" onChange={handleChange} autoComplete="new-password" required />
+                    <button type="button" className="btn btn-secondary" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"} title={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} aria-controls="add-user-password">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                        <circle cx="12" cy="12" r="3" />
+                        {showPassword && <path d="m3 3 18 18" />}
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label>Role</label>

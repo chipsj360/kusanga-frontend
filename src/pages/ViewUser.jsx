@@ -52,6 +52,7 @@ const ViewUser = ({ user, onClose }) => {
           </div>
           <div className="modal-body">
             <p><strong>Name:</strong> {user.full_name}</p>
+            <p><strong>Username:</strong> {user.username || "-"}</p>
             <p><strong>Email:</strong> {user.email}</p>
             <p><strong>Role:</strong> {user.role}</p>
             <p><strong>Department:</strong> {departmentName}</p>
